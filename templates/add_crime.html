@@ -4,50 +4,42 @@
 
 {% block content %}
 <div class="form-container">
-    <h1>Добавить новое преступление</h1>
-    
     <form id="addCrimeForm" class="crime-form">
+        <h1 class="form-title">Добавить новое преступление</h1>
         <div class="form-group">
             <label for="kusp_number">Номер КУСП:</label>
             <input type="text" id="kusp_number" name="kusp_number" required>
         </div>
-
         <div class="form-group">
             <label for="article">Статья УК:</label>
             <input type="text" id="article" name="article" required>
         </div>
-
         <div class="form-row">
             <div class="form-group">
                 <label for="incident_date">Дата:</label>
                 <input type="date" id="incident_date" name="incident_date" required>
             </div>
-
             <div class="form-group">
                 <label for="incident_time">Время:</label>
                 <input type="time" id="incident_time" name="incident_time" required>
             </div>
         </div>
-
         <div class="form-group">
             <label for="address">Адрес:</label>
             <input type="text" id="address" name="address" required>
         </div>
-
         <div class="form-group">
             <label for="department_id">Отдел полиции:</label>
             <select id="department_id" name="department_id" required>
                 <option value="">Выберите отдел</option>
             </select>
         </div>
-
         <div class="form-group">
             <label for="duty_officer_id">Дежурный офицер:</label>
             <select id="duty_officer_id" name="duty_officer_id" required>
                 <option value="">Выберите офицера</option>
             </select>
         </div>
-
         <div class="form-actions">
             <button type="submit" class="btn">Добавить</button>
             <button type="reset" class="btn btn-secondary">Очистить</button>

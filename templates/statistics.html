@@ -5,7 +5,23 @@
 {% block content %}
 <div class="statistics-container">
     <h1>Статистика преступлений</h1>
-    
+    <form id="stats-filter-form" class="filter-form" style="margin-bottom: 24px;">
+        <div class="filter-group">
+            <label for="stats_start_date">Дата с:</label>
+            <input type="date" id="stats_start_date" name="start_date">
+        </div>
+        <div class="filter-group">
+            <label for="stats_end_date">Дата по:</label>
+            <input type="date" id="stats_end_date" name="end_date">
+        </div>
+        <div class="filter-group">
+            <label for="stats_department">Отдел полиции:</label>
+            <select id="stats_department" name="department_id">
+                <option value="">Все отделы</option>
+            </select>
+        </div>
+        <button type="submit" class="filter-button">Показать</button>
+    </form>
     <div class="statistics-grid">
         <!-- Диаграмма 1: Количество преступлений по дням недели -->
         <div class="stat-card">
@@ -21,7 +37,7 @@
 
         <!-- Диаграмма 3: По отделам полиции -->
         <div class="stat-card">
-            <h2>По отделам полиции</h2>
+            <h2>По отделам полиции (диаграмма)</h2>
             <canvas id="crimeByDepartmentChart"></canvas>
         </div>
 
@@ -33,215 +49,159 @@
     </div>
 </div>
 
-<style>
-.statistics-container {
-    padding: 20px;
-}
-
-.statistics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.stat-card {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.stat-card h2 {
-    margin: 0 0 20px 0;
-    color: #333;
-    font-size: 1.2em;
-    text-align: center;
-}
-
-canvas {
-    width: 100% !important;
-    height: 300px !important;
-}
-</style>
+<!-- СТИЛИ УДАЛЕНЫ: теперь все стили только в static/css/style.css -->
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('/api/statistics');
-        if (!response.ok) {
-            throw new Error('Ошибка загрузки статистики');
-        }
-        const data = await response.json();
-        
-        // Отладочная информация
-        console.log('Все данные:', data);
-        console.log('Данные районов:', data.districts);
+let charts = {};
 
-        // Цветовая схема
-        const colors = {
-            primary: 'rgba(54, 162, 235, 0.8)',
-            secondary: 'rgba(255, 99, 132, 0.8)',
-            tertiary: 'rgba(75, 192, 192, 0.8)',
-            background: 'rgba(255, 255, 255, 0.9)'
-        };
-
-        // Диаграмма по дням недели
-        new Chart(document.getElementById('crimeByDayChart'), {
-            type: 'bar',
-            data: {
-                labels: data.days.labels,
-                datasets: [{
-                    label: 'Количество преступлений',
-                    data: data.days.data,
-                    backgroundColor: colors.primary,
-                    borderColor: colors.primary.replace('0.8', '1'),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
-
-        // Диаграмма по статьям
-        new Chart(document.getElementById('crimeByArticleChart'), {
-            type: 'bar',
-            data: {
-                labels: data.articles.labels,
-                datasets: [{
-                    label: 'Количество преступлений',
-                    data: data.articles.data,
-                    backgroundColor: colors.secondary,
-                    borderColor: colors.secondary.replace('0.8', '1'),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
-
-        // Диаграмма по отделам
-        new Chart(document.getElementById('crimeByDepartmentChart'), {
-            type: 'doughnut',
-            data: {
-                labels: data.departments.labels,
-                datasets: [{
-                    data: data.departments.data,
-                    backgroundColor: [
-                        colors.primary,
-                        colors.secondary,
-                        colors.tertiary,
-                        'rgba(255, 206, 86, 0.8)',
-                        'rgba(153, 102, 255, 0.8)',
-                        'rgba(255, 159, 64, 0.8)'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            boxWidth: 15,
-                            padding: 15
-                        }
-                    }
-                }
-            }
-        });
-
-        // Диаграмма по районам
-        const districtCtx = document.getElementById('crimeByDistrictChart').getContext('2d');
-        const districtChart = new Chart(districtCtx, {
-            type: 'doughnut',
-            data: {
-                labels: data.districts.labels,
-                datasets: [{
-                    label: 'Количество преступлений',
-                    data: data.districts.data,
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.8)',   // Синий
-                        'rgba(255, 99, 132, 0.8)',   // Красный
-                        'rgba(75, 192, 192, 0.8)',   // Бирюзовый
-                        'rgba(255, 206, 86, 0.8)',   // Жёлтый
-                        'rgba(153, 102, 255, 0.8)',  // Фиолетовый
-                        'rgba(255, 159, 64, 0.8)'    // Оранжевый
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            boxWidth: 15,
-                            padding: 15,
-                            font: {
-                                size: 12
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.raw || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                return `${label}: ${value} (${percentage}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-    } catch (error) {
-        console.error('Ошибка:', error);
-        document.querySelector('.statistics-container').innerHTML = `
-            <div class="error-message">
-                <h1>Ошибка загрузки статистики</h1>
-                <p>${error.message}</p>
-            </div>
-        `;
+function renderStatistics(data) {
+    // Очищаем старые графики
+    for (const key in charts) {
+        if (charts[key]) charts[key].destroy();
     }
+    // По дням недели
+    charts.day = new Chart(document.getElementById('crimeByDayChart'), {
+        type: 'bar',
+        data: {
+            labels: data.days.labels,
+            datasets: [{
+                label: 'Количество преступлений',
+                data: data.days.data,
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+    // По статьям
+    charts.articles = new Chart(document.getElementById('crimeByArticleChart'), {
+        type: 'bar',
+        data: {
+            labels: data.articles.labels,
+            datasets: [{
+                label: 'Количество преступлений',
+                data: data.articles.data,
+                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+    // По отделам (диаграмма)
+    charts.departments = new Chart(document.getElementById('crimeByDepartmentChart'), {
+        type: 'doughnut',
+        data: {
+            labels: data.departments.labels,
+            datasets: [{
+                data: data.departments.data,
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right', labels: { boxWidth: 15, padding: 15 } }
+            }
+        }
+    });
+    // По районам
+    charts.districts = new Chart(document.getElementById('crimeByDistrictChart'), {
+        type: 'doughnut',
+        data: {
+            labels: data.districts.labels,
+            datasets: [{
+                label: 'Количество преступлений',
+                data: data.districts.data,
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { boxWidth: 15, padding: 15, font: { size: 12 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+async function loadStatistics(filters = {}) {
+    const params = new URLSearchParams(filters);
+    const response = await fetch(`/api/statistics?${params}`);
+    const data = await response.json();
+    renderStatistics(data);
+}
+
+document.getElementById('stats-filter-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const start = document.getElementById('stats_start_date').value;
+    const end = document.getElementById('stats_end_date').value;
+    const departmentId = document.getElementById('stats_department').value;
+    const filters = {};
+    if (start) filters.start_date = start;
+    if (end) filters.end_date = end;
+    if (departmentId) filters.department_id = departmentId;
+    loadStatistics(filters);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Загрузка отделов полиции в фильтр
+    fetch('/api/departments')
+        .then(response => response.json())
+        .then(departments => {
+            const select = document.getElementById('stats_department');
+            departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.id;
+                option.textContent = dept.name;
+                select.appendChild(option);
+            });
+        });
+    loadStatistics();
 });
 </script>
 {% endblock %}

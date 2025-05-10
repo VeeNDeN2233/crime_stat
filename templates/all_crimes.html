@@ -41,14 +41,14 @@
         <table class="crimes-table">
             <thead>
                 <tr>
-                    <th style="width: 120px;">Дата</th>
-                    <th>Время</th>
-                    <th>Статья УК РФ</th>
-                    <th>Номер КУСП</th>
-                    <th>Адрес</th>
-                    <th>Отдел полиции</th>
-                    <th>Дежурный</th>
-                    <th>Телефон дежурного</th>
+                    <th style="width: 100px;">Дата</th>
+                    <th style="width: 80px;">Время</th>
+                    <th style="width: 100px;">Статья УК РФ</th>
+                    <th style="width: 120px;">Номер КУСП</th>
+                    <th style="width: 200px;">Адрес</th>
+                    <th style="width: 150px;">Отдел полиции</th>
+                    <th style="width: 150px;">Дежурный</th>
+                    <th style="width: 120px;">Телефон дежурного</th>
                 </tr>
             </thead>
             <tbody id="crime-table">
@@ -59,107 +59,6 @@
 
     <div id="map" class="map-container"></div>
 </div>
-
-<style>
-.content-wrapper {
-    display: flex;
-    gap: 20px;
-    margin: 20px;
-}
-
-.table-container {
-    flex: 1;
-    overflow-x: auto;
-}
-
-.map-container {
-    flex: 1;
-    height: 600px;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.filters {
-    margin: 20px;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.filter-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: flex-end;
-}
-
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.filter-group label {
-    font-weight: bold;
-    color: #333;
-}
-
-.filter-group select,
-.filter-group input {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    min-width: 200px;
-}
-
-.filter-button {
-    padding: 8px 16px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    height: 35px;
-}
-
-.filter-button:hover {
-    background-color: #45a049;
-}
-
-#reset-filters {
-    background-color: #f44336;
-}
-
-#reset-filters:hover {
-    background-color: #da190b;
-}
-
-.crimes-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.crimes-table th,
-.crimes-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-.crimes-table th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-}
-
-.crimes-table tr:hover {
-    background-color: #f9f9f9;
-    cursor: pointer;
-}
-</style>
 
 <script>
 let myMap;
@@ -265,14 +164,14 @@ async function loadData(filters = {}) {
             // Добавляем строку в таблицу
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td style="width: 120px;">${crime.incident_date}</td>
-                <td>${crime.incident_time}</td>
-                <td>${crime.article}</td>
-                <td>${crime.kusp_number}</td>
-                <td>${crime.address}</td>
-                <td>${crime.department_name || '-'}</td>
-                <td>${crime.officer_name || '-'}</td>
-                <td>${crime.officer_phone || '-'}</td>
+                <td style="width: 100px;">${crime.incident_date}</td>
+                <td style="width: 80px;">${crime.incident_time}</td>
+                <td style="width: 100px;">${crime.article}</td>
+                <td style="width: 120px;">${crime.kusp_number}</td>
+                <td style="width: 200px;">${crime.address}</td>
+                <td style="width: 150px;">${crime.department_name || '-'}</td>
+                <td style="width: 150px;">${crime.officer_name || '-'}</td>
+                <td style="width: 120px;">${crime.officer_phone || '-'}</td>
             `;
             table.appendChild(row);
 

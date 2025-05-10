@@ -4,6 +4,10 @@ from psycopg2 import pool
 import os
 from dotenv import load_dotenv
 import logging
+from flask_login import LoginManager, login_required, current_user
+from models import get_user_by_id
+from auth import bp as auth_bp
+from admin import bp as admin_bp
 
 # Настройка логирования
 logging.basicConfig(
@@ -17,26 +21,7 @@ load_dotenv()
 
 # Создание экземпляра приложения
 app = Flask(__name__)
-
-# Database connection pool
-DB_CONFIG = {
-    "dbname": os.getenv("DB_NAME", "crime_stat"),
-    "user": os.getenv("DB_USER", "postgres"),
-    "password": os.getenv("DB_PASSWORD", "8843"),
-    "host": os.getenv("DB_HOST", "localhost"),
-    "port": os.getenv("DB_PORT", "5432")
-}
-
-# Create connection pool
-try:
-    connection_pool = pool.SimpleConnectionPool(
-        1,  # minconn
-        10, # maxconn
-        **DB_CONFIG
-    )
-except Exception as e:
-    logger.error(f"Failed to create connection pool: {str(e)}")
-    raise
+app.secret_key = os.getenv("SECRET_KEY", "your-very-secret-key")
 
 def check_table_exists(cursor, table_name):
     cursor.execute("""
@@ -55,27 +40,47 @@ def not_found_error(error):
 def internal_error(error):
     return jsonify({"error": "Internal server error"}), 500
 
+# Flask-Login setup
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return get_user_by_id(user_id)
+
+# Регистрация blueprint'а авторизации
+app.register_blueprint(auth_bp)
+
+# Регистрация blueprint'а администратора
+app.register_blueprint(admin_bp)
+
 # Главная страница (карта + список преступлений)
 @app.route('/')
+@login_required
 def index():
     return render_template('index.html')
 
 # Страница добавления нового преступления
 @app.route('/add-crime')
+@login_required
 def add_crime():
     return render_template('add_crime.html')
 
 # Страница со списком всех преступлений
 @app.route('/all-crimes')
+@login_required
 def all_crimes():
     return render_template('all_crimes.html')
 
 # Заготовка для прогноза патрулей
 @app.route('/patrol-forecast')
+@login_required
 def patrol_forecast():
     return render_template('patrol_forecast.html')
 
 @app.route('/statistics')
+@login_required
 def statistics():
     return render_template('statistics.html')
 
@@ -308,15 +313,32 @@ def get_statistics():
         conn = connection_pool.getconn()
         cur = conn.cursor()
 
+        # Получаем параметры фильтрации
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        department_id = request.args.get('department_id')
+        date_filter = ""
+        params = []
+        if start_date:
+            date_filter += " AND incident_date >= %s"
+            params.append(start_date)
+        if end_date:
+            date_filter += " AND incident_date <= %s"
+            params.append(end_date)
+        if department_id:
+            date_filter += " AND department_id = %s"
+            params.append(department_id)
+
         # Статистика по дням недели
-        cur.execute("""
+        cur.execute(f"""
             SELECT 
                 EXTRACT(DOW FROM incident_date) as day_of_week,
                 COUNT(*) as count
             FROM incidents
+            WHERE 1=1 {date_filter}
             GROUP BY day_of_week
             ORDER BY day_of_week;
-        """)
+        """, params)
         days_stats = cur.fetchall()
         days_data = {
             'labels': ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
@@ -326,31 +348,33 @@ def get_statistics():
             days_data['data'][int(day)] = count
 
         # Статистика по статьям
-        cur.execute("""
+        cur.execute(f"""
             SELECT 
                 article,
                 COUNT(*) as count
             FROM incidents
+            WHERE 1=1 {date_filter}
             GROUP BY article
             ORDER BY count DESC
             LIMIT 10;
-        """)
+        """, params)
         articles_stats = cur.fetchall()
         articles_data = {
             'labels': [f"ст. {article}" for article, _ in articles_stats],
             'data': [count for _, count in articles_stats]
         }
 
-        # Статистика по отделам
-        cur.execute("""
+        # Статистика по отделам (для диаграммы)
+        cur.execute(f"""
             SELECT 
                 d.name,
                 COUNT(*) as count
             FROM incidents i
             JOIN departments d ON i.department_id = d.id
+            WHERE 1=1 {date_filter}
             GROUP BY d.name
             ORDER BY count DESC;
-        """)
+        """, params)
         departments_stats = cur.fetchall()
         departments_data = {
             'labels': [name for name, _ in departments_stats],
@@ -358,29 +382,25 @@ def get_statistics():
         }
 
         # Статистика по районам города
-        cur.execute("""
+        cur.execute(f"""
             SELECT 
                 d.name as district,
                 COUNT(i.id) as count
             FROM districts d
             LEFT JOIN incidents i ON i.district_id = d.id
+            WHERE 1=1 {date_filter if date_filter else ''}
             GROUP BY d.name
             ORDER BY count DESC;
-        """)
+        """, params)
         districts_stats = cur.fetchall()
-        
-        # Преобразуем данные в нужный формат
         districts_data = {
             'labels': [],
             'data': []
         }
-        
         for district, count in districts_stats:
-            if district:  # Проверяем, что район не None
+            if district:
                 districts_data['labels'].append(district)
                 districts_data['data'].append(count)
-        
-        logger.info(f"Districts data: {districts_data}")  # Логируем данные
 
         return jsonify({
             'days': days_data,

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Пользователи{% endblock %}
+{% block content %}
+<div class="statistics-container">
+    <h1>Пользователи</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form method="post" action="{{ url_for('admin.create_user') }}" class="filter-form" style="margin-bottom: 24px;">
+        <div class="filter-group">
+            <label for="username">Логин</label>
+            <input type="text" name="username" required>
+        </div>
+        <div class="filter-group">
+            <label for="password">Пароль</label>
+            <input type="password" name="password" required>
+        </div>
+        <div class="filter-group">
+            <label for="is_admin">Админ?</label>
+            <input type="checkbox" name="is_admin">
+        </div>
+        <button type="submit" class="filter-button">Создать</button>
+    </form>
+    <table class="crimes-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Логин</th>
+                <th>Админ</th>
+                <th>Блокировка</th>
+                <th>Блок. до</th>
+                <th>Создан</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for u in users %}
+            <tr>
+                <td>{{ u[0] }}</td>
+                <td>{{ u[1] }}</td>
+                <td>{% if u[2] %}✔{% endif %}</td>
+                <td>{% if u[3] %}Да{% else %}Нет{% endif %}</td>
+                <td>{{ u[4] or '' }}</td>
+                <td>{{ u[5] or '' }}</td>
+                <td>
+                    {% if not u[2] %}
+                    <form method="post" action="{{ url_for('admin.delete_user', user_id=u[0]) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Удалить пользователя?')">Удалить</button>
+                    </form>
+                    {% endif %}
+                    {% if not u[3] %}
+                    <form method="post" action="{{ url_for('admin.block_user', user_id=u[0]) }}" style="display:inline;">
+                        <input type="number" name="minutes" min="1" max="10080" placeholder="мин" style="width:60px;">
+                        <button type="submit" class="btn btn-secondary">Блокировать</button>
+                    </form>
+                    {% else %}
+                    <form method="post" action="{{ url_for('admin.unblock_user', user_id=u[0]) }}" style="display:inline;">
+                        <button type="submit" class="btn">Разблокировать</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} 

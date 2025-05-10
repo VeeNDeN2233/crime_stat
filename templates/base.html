@@ -5,38 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Crime Map{% endblock %}</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://api-maps.yandex.ru/2.1/?apikey=22f31f05-07ca-4eb3-b1b0-9217dcb759f8&lang=ru_RU" type="text/javascript"></script>
 </head>
 <body>
-    <!-- Шапка навигации -->
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <img src="/static/images/logo.png" alt="Логотип МВД России">
-                <div class="logo-text">
-                    <div>МВД России</div>
-                    <div style="font-size: 0.9rem;">Управление МВД России по г. Воронежу</div>
+    <header class="main-navbar">
+        <div class="navbar-inner">
+            <div class="navbar-left">
+                <img src="/static/images/logo.png" alt="МВД России" class="navbar-logo">
+                <div class="navbar-title">
+                    <div class="navbar-org">МВД России</div>
+                    <div class="navbar-sub">Управление МВД России по г. Воронежу</div>
                 </div>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Главная</a></li>
-                    <li><a href="/add-crime" class="{% if request.path == '/add-crime' %}active{% endif %}">Добавить преступление</a></li>
-                    <li><a href="/all-crimes" class="{% if request.path == '/all-crimes' %}active{% endif %}">Все преступления</a></li>
-                    <li><a href="/patrol-forecast" class="{% if request.path == '/patrol-forecast' %}active{% endif %}">Прогноз патрулей</a></li>
-                    <li><a href="/statistics" class="{% if request.path == '/statistics' %}active{% endif %}">Статистика</a></li>
-                </ul>
+            <nav class="navbar-menu">
+                <a href="/" class="nav-link{% if request.path == '/' %} active{% endif %}">Главная</a>
+                <a href="/all-crimes" class="nav-link{% if request.path == '/all-crimes' %} active{% endif %}">Все преступления</a>
+                <a href="/add-crime" class="nav-link{% if request.path == '/add-crime' %} active{% endif %}">Добавить преступление</a>
+                <a href="/statistics" class="nav-link{% if request.path == '/statistics' %} active{% endif %}">Статистика</a>
+                <a href="/patrol-forecast" class="nav-link{% if request.path == '/patrol-forecast' %} active{% endif %}">Прогноз патрулей</a>
             </nav>
         </div>
     </header>
-
-    <!-- Основной контент -->
     <main class="animate-fade-in">
         {% block content %}{% endblock %}
     </main>
-
-    <!-- Подвал -->
     <footer>
         <div class="footer-container">
             <p>© 2024 МВД России. Все права защищены.</p>
