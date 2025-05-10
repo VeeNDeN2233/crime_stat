@@ -166,8 +166,8 @@ def get_crimes():
             params.append(end_date)
         
         if article:
-            query += " AND i.article ILIKE %s"
-            params.append(f'%{article}%')
+            query += " AND i.article = %s"
+            params.append(article)
 
         # Добавляем сортировку
         query += " ORDER BY i.incident_date DESC, i.incident_time DESC"
@@ -211,6 +211,55 @@ def get_crimes():
         if conn:
             connection_pool.putconn(conn)
 
+@app.route('/api/crimes', methods=['POST'])
+def add_crime_api():
+    conn = None
+    cur = None
+    try:
+        data = request.get_json()
+        
+        # Проверка обязательных полей
+        required_fields = ['kusp_number', 'article', 'incident_date', 'incident_time', 
+                         'address', 'department_id', 'duty_officer_id']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Отсутствует обязательное поле: {field}"}), 400
+
+        conn = connection_pool.getconn()
+        cur = conn.cursor()
+
+        # Вставка данных
+        cur.execute("""
+            INSERT INTO incidents (
+                kusp_number, article, incident_date, incident_time,
+                address, department_id, duty_officer_id
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+        """, (
+            data['kusp_number'],
+            data['article'],
+            data['incident_date'],
+            data['incident_time'],
+            data['address'],
+            data['department_id'],
+            data['duty_officer_id']
+        ))
+        
+        new_id = cur.fetchone()[0]
+        conn.commit()
+        
+        return jsonify({"success": True, "id": new_id})
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        logger.error(f"Error adding crime: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            connection_pool.putconn(conn)
+
 @app.route('/api/departments')
 def get_departments():
     conn = None
@@ -224,6 +273,124 @@ def get_departments():
         
         return jsonify(departments)
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            connection_pool.putconn(conn)
+
+@app.route('/api/officers')
+def get_officers():
+    conn = None
+    cur = None
+    try:
+        conn = connection_pool.getconn()
+        cur = conn.cursor()
+
+        cur.execute("SELECT id, full_name FROM duty_officers ORDER BY full_name")
+        officers = [{"id": row[0], "full_name": row[1]} for row in cur.fetchall()]
+        
+        return jsonify(officers)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            connection_pool.putconn(conn)
+
+@app.route('/api/statistics')
+def get_statistics():
+    conn = None
+    cur = None
+    try:
+        conn = connection_pool.getconn()
+        cur = conn.cursor()
+
+        # Статистика по дням недели
+        cur.execute("""
+            SELECT 
+                EXTRACT(DOW FROM incident_date) as day_of_week,
+                COUNT(*) as count
+            FROM incidents
+            GROUP BY day_of_week
+            ORDER BY day_of_week;
+        """)
+        days_stats = cur.fetchall()
+        days_data = {
+            'labels': ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            'data': [0] * 7
+        }
+        for day, count in days_stats:
+            days_data['data'][int(day)] = count
+
+        # Статистика по статьям
+        cur.execute("""
+            SELECT 
+                article,
+                COUNT(*) as count
+            FROM incidents
+            GROUP BY article
+            ORDER BY count DESC
+            LIMIT 10;
+        """)
+        articles_stats = cur.fetchall()
+        articles_data = {
+            'labels': [f"ст. {article}" for article, _ in articles_stats],
+            'data': [count for _, count in articles_stats]
+        }
+
+        # Статистика по отделам
+        cur.execute("""
+            SELECT 
+                d.name,
+                COUNT(*) as count
+            FROM incidents i
+            JOIN departments d ON i.department_id = d.id
+            GROUP BY d.name
+            ORDER BY count DESC;
+        """)
+        departments_stats = cur.fetchall()
+        departments_data = {
+            'labels': [name for name, _ in departments_stats],
+            'data': [count for _, count in departments_stats]
+        }
+
+        # Статистика по районам города
+        cur.execute("""
+            SELECT 
+                d.name as district,
+                COUNT(i.id) as count
+            FROM districts d
+            LEFT JOIN incidents i ON i.district_id = d.id
+            GROUP BY d.name
+            ORDER BY count DESC;
+        """)
+        districts_stats = cur.fetchall()
+        
+        # Преобразуем данные в нужный формат
+        districts_data = {
+            'labels': [],
+            'data': []
+        }
+        
+        for district, count in districts_stats:
+            if district:  # Проверяем, что район не None
+                districts_data['labels'].append(district)
+                districts_data['data'].append(count)
+        
+        logger.info(f"Districts data: {districts_data}")  # Логируем данные
+
+        return jsonify({
+            'days': days_data,
+            'articles': articles_data,
+            'departments': departments_data,
+            'districts': districts_data
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting statistics: {str(e)}")
         return jsonify({"error": str(e)}), 500
     finally:
         if cur:

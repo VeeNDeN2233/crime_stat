@@ -3,26 +3,138 @@
 {% block title %}Добавить преступление{% endblock %}
 
 {% block content %}
-<h1>Форма добавления нового преступления</h1>
-<form id="crime-form">
-    <label for="crime_date">Дата:</label>
-    <input type="date" id="crime_date" name="crime_date" required><br>
+<div class="form-container">
+    <h1>Добавить новое преступление</h1>
+    
+    <form id="addCrimeForm" class="crime-form">
+        <div class="form-group">
+            <label for="kusp_number">Номер КУСП:</label>
+            <input type="text" id="kusp_number" name="kusp_number" required>
+        </div>
 
-    <label for="crime_time">Время:</label>
-    <input type="time" id="crime_time" name="crime_time" required><br>
+        <div class="form-group">
+            <label for="article">Статья УК:</label>
+            <input type="text" id="article" name="article" required>
+        </div>
 
-    <label for="article">Статья УК РФ:</label>
-    <input type="text" id="article" name="article" required><br>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="incident_date">Дата:</label>
+                <input type="date" id="incident_date" name="incident_date" required>
+            </div>
 
-    <label for="department_name">Отдел полиции:</label>
-    <input type="text" id="department_name" name="department_name" required><br>
+            <div class="form-group">
+                <label for="incident_time">Время:</label>
+                <input type="time" id="incident_time" name="incident_time" required>
+            </div>
+        </div>
 
-    <label for="duty_officer">Дежурный:</label>
-    <input type="text" id="duty_officer" name="duty_officer" required><br>
+        <div class="form-group">
+            <label for="address">Адрес:</label>
+            <input type="text" id="address" name="address" required>
+        </div>
 
-    <label for="address">Адрес:</label>
-    <input type="text" id="address" name="address" required><br>
+        <div class="form-group">
+            <label for="department_id">Отдел полиции:</label>
+            <select id="department_id" name="department_id" required>
+                <option value="">Выберите отдел</option>
+            </select>
+        </div>
 
-    <button type="submit">Добавить</button>
-</form>
+        <div class="form-group">
+            <label for="duty_officer_id">Дежурный офицер:</label>
+            <select id="duty_officer_id" name="duty_officer_id" required>
+                <option value="">Выберите офицера</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Добавить</button>
+            <button type="reset" class="btn btn-secondary">Очистить</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Загрузка списка отделов
+    fetch('/api/departments')
+        .then(response => response.json())
+        .then(departments => {
+            const departmentSelect = document.getElementById('department_id');
+            departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.id;
+                option.textContent = dept.name;
+                departmentSelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Ошибка загрузки отделов:', error));
+
+    // Загрузка списка офицеров
+    fetch('/api/officers')
+        .then(response => response.json())
+        .then(officers => {
+            const officerSelect = document.getElementById('duty_officer_id');
+            officers.forEach(officer => {
+                const option = document.createElement('option');
+                option.value = officer.id;
+                option.textContent = officer.full_name;
+                officerSelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Ошибка загрузки офицеров:', error));
+
+    // Обработка отправки формы
+    document.getElementById('addCrimeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = {};
+        
+        // Преобразуем FormData в объект
+        for (let [key, value] of formData.entries()) {
+            data[key] = value;
+        }
+        
+        // Показываем индикатор загрузки
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Отправка...';
+        
+        fetch('/api/crimes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => Promise.reject(err));
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.success) {
+                alert('Преступление успешно добавлено');
+                this.reset();
+            } else {
+                alert('Ошибка при добавлении: ' + (result.error || 'Неизвестная ошибка'));
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при добавлении преступления: ' + (error.error || error.message || 'Неизвестная ошибка'));
+        })
+        .finally(() => {
+            // Восстанавливаем кнопку
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        });
+    });
+});
+</script>
 {% endblock %}
