@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить преступление{% endblock %}
+
+{% block content %}
+<h1>Форма добавления нового преступления</h1>
+<form id="crime-form">
+    <label for="crime_date">Дата:</label>
+    <input type="date" id="crime_date" name="crime_date" required><br>
+
+    <label for="crime_time">Время:</label>
+    <input type="time" id="crime_time" name="crime_time" required><br>
+
+    <label for="article">Статья УК РФ:</label>
+    <input type="text" id="article" name="article" required><br>
+
+    <label for="department_name">Отдел полиции:</label>
+    <input type="text" id="department_name" name="department_name" required><br>
+
+    <label for="duty_officer">Дежурный:</label>
+    <input type="text" id="duty_officer" name="duty_officer" required><br>
+
+    <label for="address">Адрес:</label>
+    <input type="text" id="address" name="address" required><br>
+
+    <button type="submit">Добавить</button>
+</form>
+{% endblock %}

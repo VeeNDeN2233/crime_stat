@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест Яндекс.Карт</title>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=22f31f05-07ca-4eb3-b1b0-9217dcb759f8&lang=ru_RU " type="text/javascript"></script>
+</head>
+<body>
+    <div id="map" style="width: 100%; height: 500px;"></div>
+    <script>
+        ymaps.ready(() => {
+            const map = new ymaps.Map('map', {
+                center: [51.672046, 39.184302], // Координаты Воронежа
+                zoom: 12
+            });
+
+            const placemark = new ymaps.Placemark([51.672046, 39.184302], {
+                balloonContent: 'Пример метки'
+            });
+            map.geoObjects.add(placemark);
+        });
+    </script>
+</body>
+</html>

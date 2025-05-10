@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Все преступления{% endblock %}
+
+{% block content %}
+<h1>Список всех преступлений</h1>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Время</th>
+            <th>Статья УК РФ</th>
+            <th>Отдел полиции</th>
+            <th>Дежурный</th>
+            <th>Адрес</th>
+        </tr>
+    </thead>
+    <tbody id="crime-table">
+        <!-- Данные будут загружаться через JavaScript -->
+    </tbody>
+</table>
+<script>
+    fetch('/api/crimes')
+        .then(response => response.json())
+        .then(data => {
+            const table = document.getElementById('crime-table');
+            data.forEach(crime => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${crime.crime_date}</td>
+                    <td>${crime.crime_time}</td>
+                    <td>${crime.article}</td>
+                    <td>${crime.department_name}</td>
+                    <td>${crime.duty_officer}</td>
+                    <td>${crime.address}</td>
+                `;
+                table.appendChild(row);
+            });
+        });
+</script>
+{% endblock %}

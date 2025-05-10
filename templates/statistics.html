@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика преступлений{% endblock %}
+
+{% block content %}
+<h1>Статистика преступлений</h1>
+
+<!-- Диаграмма 1: Количество преступлений по дням недели -->
+<div>
+    <h2>Количество преступлений по дням недели</h2>
+    <canvas id="crimeByDayChart" width="400" height="200"></canvas>
+</div>
+
+<!-- Диаграмма 2: Количество преступлений по статьям УК РФ -->
+<div>
+    <h2>Количество преступлений по статьям УК РФ</h2>
+    <canvas id="crimeByArticleChart" width="400" height="200"></canvas>
+</div>
+
+<!-- Диаграмма 3: Количество преступлений по отделам полиции -->
+<div>
+    <h2>Количество преступлений по отделам полиции</h2>
+    <canvas id="crimeByDepartmentChart" width="400" height="200"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
+<script src="/static/statistics.js"></script>
+{% endblock %}
