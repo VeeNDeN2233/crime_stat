@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify, request
-import psycopg2
-from psycopg2 import pool
+from flask_caching import Cache
+from db import get_db_connection, release_db_connection
 import os
 from dotenv import load_dotenv
 import logging
@@ -22,6 +22,12 @@ load_dotenv()
 # Создание экземпляра приложения
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "your-very-secret-key")
+
+# Настройка кэширования
+cache = Cache(app, config={
+    'CACHE_TYPE': 'simple',
+    'CACHE_DEFAULT_TIMEOUT': 300
+})
 
 def check_table_exists(cursor, table_name):
     cursor.execute("""
@@ -49,10 +55,8 @@ login_manager.init_app(app)
 def load_user(user_id):
     return get_user_by_id(user_id)
 
-# Регистрация blueprint'а авторизации
+# Регистрация blueprint'ов
 app.register_blueprint(auth_bp)
-
-# Регистрация blueprint'а администратора
 app.register_blueprint(admin_bp)
 
 # Главная страница (карта + список преступлений)
@@ -85,47 +89,48 @@ def statistics():
     return render_template('statistics.html')
 
 @app.route('/get_incidents', methods=['GET'])
+@cache.cached(timeout=300)  # Кэшируем на 5 минут
 def get_incidents():
+    conn = None
+    cur = None
     try:
-        # Подключение к базе данных
-        conn = psycopg2.connect(**DB_CONFIG)
+        conn = get_db_connection()
         cur = conn.cursor()
 
-        # Выборка данных из таблицы incidents
         cur.execute("""
             SELECT id, kusp_number, article, incident_date, incident_time, name, address, victim_name
             FROM incidents inner join departments on incidents.department_id = departments.id;
         """)
         rows = cur.fetchall()
 
-        # Преобразование данных в JSON
-        incidents = []
-        for row in rows:
-            incidents.append({
-                "id": row[0],
-                "kusp_number": row[1],
-                "article": row[2],
-                "incident_date": row[3].strftime('%Y-%m-%d'),
-                "incident_time": row[4].strftime('%H:%M:%S'),
-                "name": row[5],
-                "address": row[6],
-                "victim_name": row[7]
-            })
-
-        # Закрытие соединения
-        cur.close()
-        conn.close()
+        incidents = [{
+            "id": row[0],
+            "kusp_number": row[1],
+            "article": row[2],
+            "incident_date": row[3].strftime('%Y-%m-%d'),
+            "incident_time": row[4].strftime('%H:%M:%S'),
+            "name": row[5],
+            "address": row[6],
+            "victim_name": row[7]
+        } for row in rows]
 
         return jsonify(incidents)
     except Exception as e:
+        logger.error(f"Error in get_incidents: {str(e)}")
         return jsonify({"error": str(e)}), 500
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            release_db_connection(conn)
 
 @app.route('/api/crimes')
+@cache.cached(timeout=300, query_string=True)  # Кэшируем с учетом параметров запроса
 def get_crimes():
     conn = None
     cur = None
     try:
-        conn = connection_pool.getconn()
+        conn = get_db_connection()
         cur = conn.cursor()
 
         # Получаем параметры фильтрации
@@ -180,41 +185,27 @@ def get_crimes():
         logger.info(f"Executing query: {query} with params: {params}")
         cur.execute(query, params)
         rows = cur.fetchall()
-        logger.info(f"Query executed successfully, fetched {len(rows)} rows")
 
-        # Преобразование данных в JSON
-        crimes = []
-        for row in rows:
-            crimes.append({
-                "incident_date": row[0].strftime('%Y-%m-%d') if row[0] else None,
-                "incident_time": row[1].strftime('%H:%M:%S') if row[1] else None,
-                "article": row[2],
-                "kusp_number": row[3],
-                "address": row[4],
-                "department_name": row[5],
-                "officer_name": row[6],
-                "officer_phone": row[7]
-            })
+        crimes = [{
+            "incident_date": row[0].strftime('%Y-%m-%d') if row[0] else None,
+            "incident_time": row[1].strftime('%H:%M:%S') if row[1] else None,
+            "article": row[2],
+            "kusp_number": row[3],
+            "address": row[4],
+            "department_name": row[5],
+            "officer_name": row[6],
+            "officer_phone": row[7]
+        } for row in rows]
 
-        logger.info(f"Successfully retrieved {len(crimes)} crimes")
         return jsonify(crimes)
-    except psycopg2.OperationalError as e:
-        error_msg = f"Database connection error: {str(e)}"
-        logger.error(error_msg)
-        return jsonify({"error": error_msg}), 500
-    except psycopg2.Error as e:
-        error_msg = f"Database error: {str(e)}\nQuery: {query if 'query' in locals() else 'Not available'}"
-        logger.error(error_msg)
-        return jsonify({"error": error_msg}), 500
     except Exception as e:
-        error_msg = f"Unexpected error: {str(e)}"
-        logger.error(error_msg)
-        return jsonify({"error": error_msg}), 500
+        logger.error(f"Error in get_crimes: {str(e)}")
+        return jsonify({"error": str(e)}), 500
     finally:
         if cur:
             cur.close()
         if conn:
-            connection_pool.putconn(conn)
+            release_db_connection(conn)
 
 @app.route('/api/crimes', methods=['POST'])
 def add_crime_api():
@@ -230,7 +221,7 @@ def add_crime_api():
             if field not in data:
                 return jsonify({"error": f"Отсутствует обязательное поле: {field}"}), 400
 
-        conn = connection_pool.getconn()
+        conn = get_db_connection()
         cur = conn.cursor()
 
         # Вставка данных
@@ -263,14 +254,14 @@ def add_crime_api():
         if cur:
             cur.close()
         if conn:
-            connection_pool.putconn(conn)
+            release_db_connection(conn)
 
 @app.route('/api/departments')
 def get_departments():
     conn = None
     cur = None
     try:
-        conn = connection_pool.getconn()
+        conn = get_db_connection()
         cur = conn.cursor()
 
         cur.execute("SELECT id, name FROM departments ORDER BY name")
@@ -283,14 +274,14 @@ def get_departments():
         if cur:
             cur.close()
         if conn:
-            connection_pool.putconn(conn)
+            release_db_connection(conn)
 
 @app.route('/api/officers')
 def get_officers():
     conn = None
     cur = None
     try:
-        conn = connection_pool.getconn()
+        conn = get_db_connection()
         cur = conn.cursor()
 
         cur.execute("SELECT id, full_name FROM duty_officers ORDER BY full_name")
@@ -303,14 +294,14 @@ def get_officers():
         if cur:
             cur.close()
         if conn:
-            connection_pool.putconn(conn)
+            release_db_connection(conn)
 
 @app.route('/api/statistics')
 def get_statistics():
     conn = None
     cur = None
     try:
-        conn = connection_pool.getconn()
+        conn = get_db_connection()
         cur = conn.cursor()
 
         # Получаем параметры фильтрации
@@ -416,7 +407,7 @@ def get_statistics():
         if cur:
             cur.close()
         if conn:
-            connection_pool.putconn(conn)
+            release_db_connection(conn)
 
 # Запуск сервера
 if __name__ == '__main__':

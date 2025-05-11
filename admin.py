@@ -93,4 +93,48 @@ def unblock_user(user_id):
     cur.close()
     connection_pool.putconn(conn)
     flash('Пользователь разблокирован', 'success')
+    return redirect(url_for('admin.users'))
+
+@bp.route('/users/change_password/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def change_password(user_id):
+    new_password = request.form.get('new_password')
+    if not new_password:
+        flash('Пароль не может быть пустым', 'danger')
+        return redirect(url_for('admin.users'))
+    
+    password_hash = generate_password_hash(new_password)
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("UPDATE users SET password_hash = %s WHERE id = %s", (password_hash, user_id))
+        conn.commit()
+        flash('Пароль изменён', 'success')
+    except psycopg2.Error as e:
+        flash('Ошибка: ' + str(e), 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.users'))
+
+@bp.route('/users/toggle_admin/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def toggle_admin(user_id):
+    if user_id == current_user.id:
+        flash('Нельзя изменить свои права администратора', 'danger')
+        return redirect(url_for('admin.users'))
+    
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("UPDATE users SET is_admin = NOT is_admin WHERE id = %s", (user_id,))
+        conn.commit()
+        flash('Права администратора изменены', 'success')
+    except psycopg2.Error as e:
+        flash('Ошибка: ' + str(e), 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
     return redirect(url_for('admin.users')) 

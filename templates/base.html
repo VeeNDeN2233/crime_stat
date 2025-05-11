@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Crime Map{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://api-maps.yandex.ru/2.1/?apikey=22f31f05-07ca-4eb3-b1b0-9217dcb759f8&lang=ru_RU" type="text/javascript"></script>
@@ -27,13 +28,77 @@
             </nav>
         </div>
     </header>
+    {% if current_user.is_authenticated and current_user.is_admin %}
+    <div class="admin-button-container">
+        <a href="/admin/users" class="admin-link{% if request.path.startswith('/admin') %} active{% endif %}">
+            Администратор
+        </a>
+    </div>
+    {% endif %}
     <main class="animate-fade-in">
         {% block content %}{% endblock %}
     </main>
+
     <footer>
         <div class="footer-container">
-            <p>© 2024 МВД России. Все права защищены.</p>
+            <p>© 2025 МВД России. Все права защищены.</p>
         </div>
     </footer>
+
+    <style>
+    .admin-button-container {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 9999;
+        background: transparent;
+    }
+    .admin-link {
+        display: inline-block;
+        background: linear-gradient(45deg, #2c3e50, #3498db);
+        color: white !important;
+        padding: 8px 16px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .admin-link:hover {
+        background: linear-gradient(45deg, #3498db, #2c3e50);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        border-color: rgba(255,255,255,0.2);
+    }
+    .navbar-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    .navbar-menu {
+        display: flex;
+        gap: 15px;
+        margin-right: 20px;
+    }
+    .nav-link {
+        color: white;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    </style>
 </body>
 </html>
