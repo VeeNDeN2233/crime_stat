@@ -31,6 +31,14 @@
                    title="Введите номер статьи УК РФ (например: 158 или 158.1)">
         </div>
 
+        <div class="filter-group" style="display: flex; flex-direction: column; min-width: 220px;">
+            <label for="search">Поиск по всем полям:</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="search" name="search" placeholder="Введите адрес, КУСП, ФИО, отдел или статью..." style="flex:1;">
+                <button type="button" id="search-button" class="filter-button" style="min-width: 90px;">Поиск</button>
+            </div>
+        </div>
+
         <button type="submit" class="filter-button">Применить фильтры</button>
         <button type="button" id="reset-filters" class="filter-button">Сбросить</button>
     </form>
@@ -205,16 +213,12 @@ document.getElementById('filter-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const formData = new FormData(this);
     const filters = {};
-    
-    // Обработка всех полей формы
     for (let [key, value] of formData.entries()) {
-        if (value) {  // Добавляем только непустые значения
+        if (value) {
             if (key === 'start_date' || key === 'end_date') {
-                // Преобразуем дату в формат YYYY-MM-DD
                 const date = new Date(value);
                 filters[key] = date.toISOString().split('T')[0];
             } else if (key === 'article') {
-                // Очищаем и форматируем номер статьи
                 const cleanArticle = value.trim().replace(/[^\d.]/g, '');
                 if (cleanArticle) {
                     filters[key] = cleanArticle;
@@ -224,19 +228,25 @@ document.getElementById('filter-form').addEventListener('submit', function(e) {
             }
         }
     }
-    
-    // Показываем индикатор загрузки
+    // Добавляем значение поиска
+    const searchValue = document.getElementById('search').value.trim();
+    if (searchValue) {
+        filters['search'] = searchValue;
+    }
     const submitButton = this.querySelector('button[type="submit"]');
     const originalText = submitButton.textContent;
     submitButton.disabled = true;
     submitButton.textContent = 'Загрузка...';
-    
     loadData(filters)
         .finally(() => {
-            // Восстанавливаем кнопку
             submitButton.disabled = false;
             submitButton.textContent = originalText;
         });
+});
+
+// Добавляю обработчик для кнопки поиска
+document.getElementById('search-button').addEventListener('click', function() {
+    document.getElementById('filter-form').dispatchEvent(new Event('submit'));
 });
 
 // Добавляем обработчик ввода для поля статьи

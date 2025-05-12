@@ -160,6 +160,7 @@ def get_crimes():
         start_date = request.args.get('start_date')
         end_date = request.args.get('end_date')
         article = request.args.get('article')
+        search = request.args.get('search')
 
         # Проверка существования таблицы
         if not check_table_exists(cur, 'incidents'):
@@ -200,6 +201,17 @@ def get_crimes():
         if article:
             query += " AND i.article = %s"
             params.append(article)
+        
+        if search:
+            query += " AND ("
+            query += "i.address ILIKE %s OR "
+            query += "i.kusp_number ILIKE %s OR "
+            query += "CAST(i.article AS TEXT) ILIKE %s OR "
+            query += "d.name ILIKE %s OR "
+            query += "o.full_name ILIKE %s"
+            query += ")"
+            search_pattern = f"%{search}%"
+            params.extend([search_pattern]*5)
 
         # Добавляем сортировку
         query += " ORDER BY i.incident_date DESC, i.incident_time DESC"

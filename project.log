@@ -421,3 +421,82 @@ DIRECT WRITE TEST: user: admin
 2025-05-12 10:02:54,468 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:54] "GET /api/departments HTTP/1.1" 200 -
 2025-05-12 10:02:54,741 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:54] "GET /api/crimes HTTP/1.1" 200 -
 2025-05-12 10:02:54,756 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:54] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 10:05:16,349 - werkzeug - INFO -  * Detected change in 'C:\\kirin\\app.py', reloading
+2025-05-12 10:05:16,395 - werkzeug - INFO -  * Restarting with stat
+2025-05-12 10:05:17,290 - werkzeug - WARNING -  * Debugger is active!
+2025-05-12 10:05:17,305 - werkzeug - INFO -  * Debugger PIN: 112-768-633
+2025-05-12 10:06:59,335 - werkzeug - INFO -  * Detected change in 'C:\\kirin\\app.py', reloading
+2025-05-12 10:06:59,386 - werkzeug - INFO -  * Restarting with stat
+2025-05-12 10:07:00,102 - werkzeug - WARNING -  * Debugger is active!
+2025-05-12 10:07:00,122 - werkzeug - INFO -  * Debugger PIN: 112-768-633
+2025-05-12 10:07:40,281 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:07:40] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 10:07:40,464 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:07:40] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 10:07:40,515 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:07:40] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 10:07:40,916 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:07:40] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 10:07:40,934 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         ORDER BY i.incident_date DESC, i.incident_time DESC with params: []
+2025-05-12 10:07:40,946 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:07:40] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 10:07:41,099 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:07:41] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 10:08:02,810 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         AND (i.address ILIKE %s OR i.kusp_number ILIKE %s OR CAST(i.article AS TEXT) ILIKE %s OR d.name ILIKE %s OR o.full_name ILIKE %s) ORDER BY i.incident_date DESC, i.incident_time DESC with params: ['%Шишкова%', '%Шишкова%', '%Шишкова%', '%Шишкова%', '%Шишкова%']
+2025-05-12 10:08:02,817 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:08:02] "GET /api/crimes?search=Шишкова HTTP/1.1" 200 -
+2025-05-12 10:08:03,213 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:08:03] "GET /api/crimes?search=Шишкова HTTP/1.1" 200 -
+2025-05-12 10:08:11,498 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:08:11] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 10:08:19,385 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:08:19] "GET /api/crimes?search=Шишкова HTTP/1.1" 200 -
+2025-05-12 10:08:21,543 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:08:21] "GET /api/crimes?search=Шишкова HTTP/1.1" 200 -
+2025-05-12 10:08:28,052 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:08:28] "GET /api/crimes?search=Шишкова HTTP/1.1" 200 -
+2025-05-12 10:09:41,008 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:09:41] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 10:09:41,061 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:09:41] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 10:09:41,271 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:09:41] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 10:09:41,553 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:09:41] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 10:09:41,553 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:09:41] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 10:09:55,084 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:09:55] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 10:10:09,385 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:10:09] "GET /api/crimes?search=Шишкова HTTP/1.1" 200 -
+2025-05-12 10:10:18,932 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         AND (i.address ILIKE %s OR i.kusp_number ILIKE %s OR CAST(i.article AS TEXT) ILIKE %s OR d.name ILIKE %s OR o.full_name ILIKE %s) ORDER BY i.incident_date DESC, i.incident_time DESC with params: ['%158%', '%158%', '%158%', '%158%', '%158%']
+2025-05-12 10:10:18,934 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:10:18] "GET /api/crimes?search=158 HTTP/1.1" 200 -
+2025-05-12 10:10:25,531 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:10:25] "GET /api/crimes HTTP/1.1" 200 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 10:10:54,894 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 10:10:54,896 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:10:54] "GET / HTTP/1.1" 200 -
+2025-05-12 10:10:55,049 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:10:55] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 10:10:55,149 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:10:55] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
