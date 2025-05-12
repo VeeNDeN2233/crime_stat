@@ -3,6 +3,538 @@
 {% block title %}Прогноз патрулей{% endblock %}
 
 {% block content %}
-<h1>Прогноз расстановки патрулей</h1>
-<p>Здесь будет отображаться информация о прогнозах.</p>
+<h1>Система планирования охраны общественного порядка</h1>
+
+<div class="oop-container">
+    <div class="form-container">
+        <form id="event-form" class="event-form">
+            <div class="form-group">
+                <label for="location">Место проведения мероприятия:</label>
+                <input type="text" id="location" name="location" 
+                       placeholder="Например: площадь Ленина, Воронеж" required>
+            </div>
+
+            <div class="form-group">
+                <label for="participants">Ожидаемое количество участников:</label>
+                <input type="number" id="participants" name="participants" 
+                       min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="event-type">Тип мероприятия:</label>
+                <select id="event-type" name="event-type" required>
+                    <option value="">Выберите тип мероприятия</option>
+                    <option value="cultural">Культурное мероприятие</option>
+                    <option value="sports">Спортивное мероприятие</option>
+                    <option value="political">Общественно-политическое мероприятие</option>
+                    <option value="celebration">Праздничное мероприятие</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="event-date">Дата проведения:</label>
+                <input type="date" id="event-date" name="event-date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="event-time">Время начала:</label>
+                <input type="time" id="event-time" name="event-time" required>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Продолжительность (часов):</label>
+                <input type="number" id="duration" name="duration" 
+                       min="1" max="24" required>
+            </div>
+
+            <button type="submit" class="submit-button">Рассчитать план охраны</button>
+        </form>
+    </div>
+
+    <div class="result-container">
+        <div class="map-container">
+            <div id="map" style="width: 100%; height: 500px;"></div>
+        </div>
+        
+        <div class="stats-container">
+            <h3>Результаты расчета:</h3>
+            <div id="calculation-results">
+                <!-- Здесь будут отображаться результаты расчета -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.oop-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+.form-container {
+    flex: 0 0 300px;
+}
+
+.result-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.map-container {
+    width: 100%;
+    height: 500px;
+}
+
+.event-form {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.submit-button:hover {
+    background: #0056b3;
+}
+
+.stats-container {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.streets-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px 25px;
+    border-radius: 4px;
+    background: #fff;
+}
+</style>
+
+<script>
+let myMap;
+let eventMarker;
+let securityPoints = [];
+let blockadeLines = [];
+let streets = [];
+
+// Инициализация карты
+function initMap() {
+    myMap = new ymaps.Map('map', {
+        center: [51.672046, 39.184302],
+        zoom: 13
+    });
+
+    // Добавляем поиск по карте
+    let searchControl = new ymaps.control.SearchControl({
+        options: {
+            provider: 'yandex#search',
+            boundedBy: [[51.5, 39.0], [51.8, 39.4]],
+            strictBounds: true
+        }
+    });
+    myMap.controls.add(searchControl);
+}
+
+// Обработка отправки формы
+document.getElementById('event-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const location = formData.get('location');
+    const participants = parseInt(formData.get('participants'));
+    const eventType = formData.get('event-type');
+    
+    try {
+        // Геокодируем адрес
+        const res = await ymaps.geocode(location + ', Воронеж');
+        const firstGeoObject = res.geoObjects.get(0);
+        const coords = firstGeoObject.geometry.getCoordinates();
+        
+        // Очищаем предыдущие метки
+        clearMap();
+        
+        // Добавляем метку места проведения
+        addEventMarker(coords);
+        
+        // Находим и анализируем улицы вокруг места проведения
+        await analyzeArea(coords, participants, eventType);
+        
+    } catch (error) {
+        console.error('Ошибка при обработке данных:', error);
+        alert('Произошла ошибка при обработке данных. Пожалуйста, проверьте введенный адрес.');
+    }
+});
+
+// Очистка карты
+function clearMap() {
+    if (eventMarker) {
+        myMap.geoObjects.remove(eventMarker);
+    }
+    securityPoints.forEach(point => myMap.geoObjects.remove(point));
+    blockadeLines.forEach(line => myMap.geoObjects.remove(line));
+    streets.forEach(street => myMap.geoObjects.remove(street));
+    
+    securityPoints = [];
+    blockadeLines = [];
+    streets = [];
+}
+
+// Добавление метки места проведения
+function addEventMarker(coords) {
+    eventMarker = new ymaps.Placemark(coords, {
+        balloonContent: 'Место проведения мероприятия'
+    }, {
+        preset: 'islands#redDotIcon'
+    });
+    myMap.geoObjects.add(eventMarker);
+    myMap.setCenter(coords, 16);
+}
+
+// Получение точек для постов с интервалом в 100 метров
+function getSecurityPoints(coordinates, path) {
+    const points = [];
+    const totalDistance = path.getLength(); // Длина в метрах
+    const interval = 100; // Интервал между постами в метрах
+    
+    if (totalDistance > 0) {
+        // Всегда добавляем начальную точку
+        points.push(coordinates[0]);
+        
+        // Расставляем точки через каждые 100 метров
+        for (let distance = interval; distance < totalDistance; distance += interval) {
+            // Находим индекс сегмента, в котором находится текущая точка
+            let segmentIndex = 0;
+            let accumulatedDistance = 0;
+            
+            while (segmentIndex < coordinates.length - 1) {
+                const segmentLength = ymaps.coordSystem.geo.getDistance(
+                    coordinates[segmentIndex],
+                    coordinates[segmentIndex + 1]
+                );
+                
+                if (accumulatedDistance + segmentLength >= distance) {
+                    // Вычисляем точку на сегменте
+                    const ratio = (distance - accumulatedDistance) / segmentLength;
+                    const point = [
+                        coordinates[segmentIndex][0] + (coordinates[segmentIndex + 1][0] - coordinates[segmentIndex][0]) * ratio,
+                        coordinates[segmentIndex][1] + (coordinates[segmentIndex + 1][1] - coordinates[segmentIndex][1]) * ratio
+                    ];
+                    points.push(point);
+                    break;
+                }
+                
+                accumulatedDistance += segmentLength;
+                segmentIndex++;
+            }
+        }
+        
+        // Добавляем конечную точку, если она достаточно далеко от последней
+        const lastPoint = coordinates[coordinates.length - 1];
+        if (points.length > 0) {
+            const lastAddedPoint = points[points.length - 1];
+            const distanceToEnd = ymaps.coordSystem.geo.getDistance(lastAddedPoint, lastPoint);
+            if (distanceToEnd > 50) {
+                points.push(lastPoint);
+            }
+        }
+    }
+    
+    return points;
+}
+
+// Отметка улиц и расстановка постов
+async function markStreets(foundStreets, centerCoords, radius, participants, eventType) {
+    const blockedStreets = [];
+    let totalPoints = 0;
+    let totalLength = 0;
+    const streetDetails = [];
+    const dpsPosts = [];
+    const regularPosts = [];
+    const regularPostRadius = 300; // радиус для обычных постов (метров)
+    const dpsMiddleMinLength = 400; // если улица длиннее этого, ставим второй пост ДПС в середине
+    
+    // Обрабатываем каждую найденную улицу
+    for (const street of foundStreets) {
+        try {
+            // Получаем детальную информацию о геометрии улицы
+            const streetRes = await ymaps.geocode(street.name + ', Воронеж');
+            const streetObj = streetRes.geoObjects.get(0);
+            
+            if (streetObj) {
+                // Получаем маршрут по дороге
+                const routeRes = await ymaps.route([
+                    centerCoords,
+                    street.coords
+                ], {
+                    mapStateAutoApply: false,
+                    routingMode: 'auto'
+                });
+
+                if (routeRes && routeRes.getLength() > 0) {
+                    const path = routeRes.getPaths().get(0);
+                    const coordinates = path.geometry.getCoordinates();
+                    const streetLength = path.getLength(); // Длина в метрах
+                    totalLength += streetLength;
+
+                    // Создаем линию по маршруту
+                    const streetLine = new ymaps.Polyline(
+                        coordinates,
+                        {
+                            balloonContent: `Улица: ${street.name}<br>Длина участка: ${Math.round(streetLength)}м`
+                        },
+                        {
+                            strokeColor: '#FF4500',
+                            strokeWidth: 4,
+                            strokeOpacity: 0.7
+                        }
+                    );
+                    
+                    streets.push(streetLine);
+                    myMap.geoObjects.add(streetLine);
+                    blockedStreets.push(street.name);
+
+                    // Получаем точки для постов охраны
+                    const securityPoints = getSecurityPoints(coordinates, path);
+                    console.log(`Расставляем посты охраны на улице ${street.name}:`, securityPoints.length, 'постов');
+                    
+                    // Добавляем посты охраны
+                    securityPoints.forEach((point, index) => {
+                        const securityPoint = new ymaps.Placemark(point, {
+                            balloonContent: `Пост охраны #${totalPoints + index + 1}<br>` +
+                                          `Улица: ${street.name}<br>` +
+                                          `Личный состав: 5-10 сотрудников`
+                        }, {
+                            preset: 'islands#blueDotIcon'
+                        });
+                        
+                        securityPoints.push(securityPoint);
+                        myMap.geoObjects.add(securityPoint);
+                    });
+                    
+                    streetDetails.push({
+                        name: street.name,
+                        length: Math.round(streetLength),
+                        points: securityPoints.length
+                    });
+                    
+                    totalPoints += securityPoints.length;
+
+                    // --- Посты ДПС ---
+                    // В начале улицы (ближайшая к центру точка)
+                    if (Array.isArray(coordinates) && coordinates.length > 0) {
+                        const startPoint = coordinates[0];
+                        if (startPoint && Array.isArray(startPoint) && startPoint.length === 2) {
+                            const dpsStart = new ymaps.Placemark(startPoint, {
+                                balloonContent: `Пост ДПС (начало улицы)<br>Улица: ${street.name}<br>Личный состав: 2-3 сотрудника ДПС`
+                            }, {
+                                preset: 'islands#yellowCircleDotIcon'
+                            });
+                            dpsPosts.push(dpsStart);
+                            myMap.geoObjects.add(dpsStart);
+                            console.log('Добавлен пост ДПС (начало улицы):', startPoint, street.name);
+                        }
+                    }
+
+                    // Если улица длинная — ещё один пост в середине
+                    if (streetLength > dpsMiddleMinLength && Array.isArray(coordinates) && coordinates.length > 1) {
+                        let midDist = streetLength / 2;
+                        let segmentIndex = 0;
+                        let accumulated = 0;
+                        let midPoint = coordinates[0];
+                        while (segmentIndex < coordinates.length - 1) {
+                            const segLen = ymaps.coordSystem.geo.getDistance(
+                                coordinates[segmentIndex],
+                                coordinates[segmentIndex + 1]
+                            );
+                            if (accumulated + segLen >= midDist) {
+                                const ratio = (midDist - accumulated) / segLen;
+                                midPoint = [
+                                    coordinates[segmentIndex][0] + (coordinates[segmentIndex + 1][0] - coordinates[segmentIndex][0]) * ratio,
+                                    coordinates[segmentIndex][1] + (coordinates[segmentIndex + 1][1] - coordinates[segmentIndex][1]) * ratio
+                                ];
+                                break;
+                            }
+                            accumulated += segLen;
+                            segmentIndex++;
+                        }
+                        if (midPoint && Array.isArray(midPoint) && midPoint.length === 2) {
+                            const dpsMiddle = new ymaps.Placemark(midPoint, {
+                                balloonContent: `Пост ДПС (середина улицы)<br>Улица: ${street.name}<br>Личный состав: 2-3 сотрудника ДПС`
+                            }, {
+                                preset: 'islands#yellowCircleDotIcon'
+                            });
+                            dpsPosts.push(dpsMiddle);
+                            myMap.geoObjects.add(dpsMiddle);
+                            console.log('Добавлен пост ДПС (середина улицы):', midPoint, street.name);
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.error(`Ошибка при обработке улицы ${street.name}:`, error);
+        }
+    }
+
+    // Итоговый вывод
+    const resultsHtml = `
+        <div class="calculation-details">
+            <h4>Блокированные улицы:</h4>
+            <ul class="streets-list">
+                ${streetDetails.map(street => 
+                    `<li>${street.name} (${street.length}м) - ${street.points} постов</li>`
+                ).join('')}
+            </ul>
+            <p><strong>Общая протяженность блокирования:</strong> ${Math.round(totalLength)}м</p>
+            <p><strong>Количество постов охраны:</strong> ${totalPoints}</p>
+            <p><strong>Постов ДПС:</strong> ${dpsPosts.length}</p>
+            <p><strong>Необходимый личный состав:</strong></p>
+            <ul>
+                <li>Сотрудники на постах: ${totalPoints * 5}-${totalPoints * 10} человек</li>
+                <li>Экипажи ДПС: ${dpsPosts.length} (${dpsPosts.length * 2} сотрудников)</li>
+                <li>Мобильный резерв: ${Math.ceil(totalPoints / 4)} экипажей (${Math.ceil(totalPoints / 4) * 3} сотрудников)</li>
+            </ul>
+        </div>
+    `;
+    document.getElementById('calculation-results').innerHTML = resultsHtml;
+
+    return {
+        blockedStreets: blockedStreets,
+        totalPoints: totalPoints,
+        totalLength: Math.round(totalLength),
+        streetDetails: streetDetails,
+        dpsPosts: dpsPosts.length
+    };
+}
+
+// Анализ территории и поиск улиц
+async function analyzeArea(coords, participants, eventType) {
+    try {
+        // Радиус зоны в зависимости от количества участников и типа мероприятия
+        const typeCoefficients = {
+            'cultural': 1,
+            'sports': 1.2,
+            'political': 1.5,
+            'celebration': 1.3
+        };
+        
+        const baseRadius = Math.sqrt(participants) * 10;
+        const radius = baseRadius * (typeCoefficients[eventType] || 1);
+        
+        // Создаем круг для визуализации зоны
+        const circle = new ymaps.Circle([coords, radius], {}, {
+            fillColor: '#ff000022',
+            strokeColor: '#ff0000',
+            strokeWidth: 2
+        });
+        myMap.geoObjects.add(circle);
+
+        // Ищем улицы в радиусе
+        const response = await ymaps.geocode(coords, {
+            kind: 'street',
+            results: 15,
+            radius: radius
+        });
+
+        const foundStreets = [];
+        response.geoObjects.each((obj) => {
+            const streetBounds = obj.properties.get('boundedBy');
+            if (streetBounds) {
+                foundStreets.push({
+                    name: obj.properties.get('name'),
+                    bounds: streetBounds,
+                    coords: obj.geometry.getCoordinates()
+                });
+            }
+        });
+
+        // Отмечаем улицы и расставляем посты
+        const result = await markStreets(foundStreets, coords, radius, participants, eventType);
+        
+        // Показываем результаты
+        showResults(participants, eventType, foundStreets.length, result);
+        
+    } catch (error) {
+        console.error('Ошибка при анализе территории:', error);
+        alert('Произошла ошибка при анализе территории. Пожалуйста, попробуйте еще раз.');
+    }
+}
+
+// Отображение результатов расчета
+function showResults(participants, eventType, streetsCount, result) {
+    const typeCoefficients = {
+        'cultural': { name: 'Культурное мероприятие', coef: 1 },
+        'sports': { name: 'Спортивное мероприятие', coef: 1.2 },
+        'political': { name: 'Общественно-политическое мероприятие', coef: 1.5 },
+        'celebration': { name: 'Праздничное мероприятие', coef: 1.3 }
+    };
+
+    // Формируем список улиц с деталями
+    const streetsList = result.streetDetails
+        .map(street => `<li>${street.name} (${street.length}м, ${street.points} постов)</li>`)
+        .join('');
+    
+    const resultsHtml = `
+        <div class="calculation-details">
+            <p><strong>Тип мероприятия:</strong> ${typeCoefficients[eventType]?.name || 'Не указан'}</p>
+            <p><strong>Количество перекрываемых улиц:</strong> ${streetsCount}</p>
+            <p><strong>Общая протяженность перекрытия:</strong> ${result.totalLength} метров</p>
+            <p><strong>Количество постов охраны:</strong> ${result.totalPoints}</p>
+            <p><strong>Постов ДПС:</strong> ${result.dpsPosts}</p>
+            <p><strong>Необходимый личный состав:</strong> ${result.totalPoints * 7} человек (в среднем 7 человек на пост)</p>
+            
+            <p><strong>Перекрываемые улицы:</strong></p>
+            <ul class="streets-list">
+                ${streetsList}
+            </ul>
+
+            <p><strong>Дополнительные силы:</strong></p>
+            <ul>
+                <li>Патрульные экипажи: ${Math.ceil(result.totalPoints / 5)} (1 экипаж на 5 постов)</li>
+                <li>Мобильный резерв: ${Math.ceil(result.totalPoints / 3)} сотрудников</li>
+                <li>Сотрудники ДПС: ${result.dpsPosts * 2} (по 2-3 сотрудника на пост ДПС)</li>
+            </ul>
+        </div>
+    `;
+    
+    document.getElementById('calculation-results').innerHTML = resultsHtml;
+}
+
+// Инициализация при загрузке страницы
+ymaps.ready(initMap);
+</script>
 {% endblock %}

@@ -105,6 +105,12 @@ def all_crimes():
 def patrol_forecast():
     return render_template('patrol_forecast.html')
 
+# Система ООП (Охрана общественного порядка)
+@app.route('/oop')
+@login_required
+def oop():
+    return render_template('oop.html')
+
 @app.route('/statistics')
 @login_required
 def statistics():

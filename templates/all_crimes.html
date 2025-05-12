@@ -73,6 +73,8 @@
 <script>
 let myMap;
 let markers = [];
+let markerMap = new Map(); // crimeId -> marker
+let contextMenu;
 
 // Инициализация карты
 function initMap() {
@@ -120,12 +122,16 @@ function addMarker(coordinates, properties) {
     
     markers.push(marker);
     myMap.geoObjects.add(marker);
+    if (properties.id !== undefined) {
+        markerMap.set(properties.id, marker);
+    }
 }
 
 // Очистка всех меток
 function clearMarkers() {
     markers.forEach(marker => myMap.geoObjects.remove(marker));
     markers = [];
+    markerMap.clear();
 }
 
 // Загрузка списка отделов
@@ -183,11 +189,18 @@ async function loadData(filters = {}) {
                 <td style="width: 150px;">${crime.officer_name || '-'}</td>
                 <td style="width: 120px;">${crime.officer_phone || '-'}</td>
             `;
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showOnlyMarkerForCrime(crime.id, crime);
+                showContextMenu(e, crime, row);
+            });
             table.appendChild(row);
 
             // Геокодируем адрес и добавляем метку
             try {
                 const geoResult = await geocodeAddress(crime.address);
+                crime.id = crime.id || crime.kusp_number || Math.random(); // уникальный id
                 addMarker(geoResult.coordinates, crime);
             } catch (error) {
                 console.error(`Ошибка геокодирования для адреса ${crime.address}:`, error);
@@ -337,5 +350,87 @@ window.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// Показывать только маркер, связанный с этим событием
+function showOnlyMarkerForCrime(crimeId, crime) {
+    // Скрыть все маркеры
+    markers.forEach(marker => myMap.geoObjects.remove(marker));
+    // Показать только нужный
+    const marker = markerMap.get(crimeId);
+    if (marker) {
+        myMap.geoObjects.add(marker);
+        marker.balloon.open();
+        // Центрируем карту на маркере
+        myMap.setCenter(marker.geometry.getCoordinates(), 15);
+    }
+}
+
+// Контекстное меню
+function showContextMenu(e, crime, row) {
+    removeContextMenu();
+    contextMenu = document.createElement('div');
+    contextMenu.className = 'crime-context-menu';
+    contextMenu.innerHTML = `
+        <button onclick="editCrime('${crime.id}')">Редактировать</button>
+        <button onclick="deleteCrime('${crime.id}')">Удалить</button>
+    `;
+    document.body.appendChild(contextMenu);
+    // Позиционируем меню рядом с курсором
+    const rect = row.getBoundingClientRect();
+    contextMenu.style.top = (window.scrollY + rect.top + row.offsetHeight) + 'px';
+    contextMenu.style.left = (window.scrollX + rect.left + 20) + 'px';
+    // Закрытие по клику вне меню
+    setTimeout(() => {
+        document.addEventListener('click', removeContextMenu, { once: true });
+    }, 0);
+}
+
+function removeContextMenu() {
+    if (contextMenu) {
+        contextMenu.remove();
+        contextMenu = null;
+    }
+}
+
+// Заглушки для редактирования и удаления
+function editCrime(id) {
+    alert('Редактировать: ' + id);
+    removeContextMenu();
+}
+function deleteCrime(id) {
+    alert('Удалить: ' + id);
+    removeContextMenu();
+}
+
+// Стили для контекстного меню
+const style = document.createElement('style');
+style.innerHTML = `
+.crime-context-menu {
+    position: absolute;
+    z-index: 9999;
+    background: #fff;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    padding: 8px 0;
+    min-width: 140px;
+    font-size: 1rem;
+}
+.crime-context-menu button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 8px 18px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #222;
+}
+.crime-context-menu button:hover {
+    background: #f0f0f0;
+}
+`;
+document.head.appendChild(style);
 </script>
 {% endblock %}
