@@ -25,9 +25,9 @@
                     <label for="password">Пароль</label>
                     <input type="password" name="password" required>
                 </div>
-                <div class="filter-group">
-                    <label for="is_admin">Администратор</label>
-                    <input type="checkbox" name="is_admin">
+                <div class="filter-group filter-group-row">
+                    <label for="is_admin" style="margin: 0 8px 0 0;">Администратор</label>
+                    <input type="checkbox" name="is_admin" style="margin: 0 0 0 0; align-self: center;">
                 </div>
                 <button type="submit" class="btn btn-primary">Создать</button>
             </form>
@@ -306,6 +306,11 @@
 }
 .filter-group input[type="checkbox"] {
     margin-top: 5px;
+}
+.filter-group-row {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
 }
 </style>
 {% endblock %} 
