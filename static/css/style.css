@@ -626,4 +626,42 @@ canvas {
 }
 #departments-table tr:hover {
     background-color: #f9f9f9;
+}
+
+/* --- Кнопки проекта --- */
+.btn {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    background: #3949ab;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(26,35,126,0.08);
+    outline: none;
+    text-decoration: none;
+    margin: 0 4px 0 0;
+}
+.btn:hover, .btn:focus {
+    background: #1a237e;
+    color: #ffd700;
+}
+.btn-info {
+    background: #3498db;
+    color: #fff;
+}
+.btn-info:hover, .btn-info:focus {
+    background: #217dbb;
+    color: #ffd700;
+}
+.btn-secondary {
+    background: #95a5a6;
+    color: #fff;
+}
+.btn-secondary:hover, .btn-secondary:focus {
+    background: #7f8c8d;
+    color: #ffd700;
 } 

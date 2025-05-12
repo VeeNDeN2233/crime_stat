@@ -3,6 +3,9 @@
 {% block content %}
 <div class="statistics-container">
     <h1>Управление пользователями</h1>
+    <div style="margin-bottom: 20px;">
+        <a href="{{ url_for('admin.logs') }}" class="btn btn-info" style="font-weight:600;">Журнал логов</a>
+    </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}

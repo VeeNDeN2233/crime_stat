@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Журнал логов{% endblock %}
+{% block content %}
+<div class="log-page-container">
+    <div class="log-header-bar">
+        <h2>Журнал логов проекта</h2>
+        <div class="log-header-actions">
+            <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Назад к пользователям</a>
+            <button type="button" class="btn btn-info" onclick="location.reload()">Обновить</button>
+            <form method="post" action="{{ url_for('admin.clear_logs') }}" style="display:inline; margin:0; padding:0;">
+                <button type="submit" class="btn btn-danger log-clear-btn" onclick="return confirm('Очистить журнал логов?')">Очистить логи</button>
+            </form>
+        </div>
+    </div>
+    <div class="log-content-wrapper">
+        <pre id="log-content" class="log-content-area">{{ log_content }}</pre>
+    </div>
+</div>
+
+<style>
+.log-page-container {
+    max-width: 1000px;
+    margin: 40px auto 0 auto;
+    background: #181c23;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    border: 1px solid #23272f;
+    padding-bottom: 24px;
+}
+.log-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px 12px 32px;
+    border-bottom: 1px solid #23272f;
+    background: #23272f;
+    border-radius: 12px 12px 0 0;
+}
+.log-header-bar h2 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.log-header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.log-header-actions .btn, .log-header-actions .log-clear-btn {
+    height: 40px;
+    min-width: 140px;
+    font-size: 1em;
+    font-weight: 500;
+    padding: 8px 20px;
+    box-sizing: border-box;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.log-header-actions form {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+.log-content-wrapper {
+    padding: 0 32px 24px 32px;
+}
+.log-content-area {
+    background: #181c23;
+    color: #e0e0e0;
+    padding: 24px;
+    border-radius: 8px;
+    max-height: 600px;
+    min-height: 400px;
+    overflow-y: auto;
+    font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    border: 1px solid #23272f;
+    margin-top: 18px;
+    white-space: pre-wrap;
+}
+.btn-danger {
+    background: #e74c3c;
+    color: #fff;
+}
+.btn-danger:hover, .btn-danger:focus {
+    background: #c0392b;
+    color: #ffd700;
+}
+</style>
+<script>
+// Автопрокрутка вниз при загрузке
+window.onload = function() {
+    var log = document.getElementById('log-content');
+    if (log) log.scrollTop = log.scrollHeight;
+}
+</script>
+{% endblock %} 

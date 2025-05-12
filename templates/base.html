@@ -25,6 +25,9 @@
                 <a href="/add-crime" class="nav-link{% if request.path == '/add-crime' %} active{% endif %}">Добавить преступление</a>
                 <a href="/statistics" class="nav-link{% if request.path == '/statistics' %} active{% endif %}">Статистика</a>
                 <a href="/patrol-forecast" class="nav-link{% if request.path == '/patrol-forecast' %} active{% endif %}">Прогноз патрулей</a>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.logout') }}" class="nav-link nav-link-logout">Выйти</a>
+                {% endif %}
             </nav>
         </div>
     </header>
@@ -98,6 +101,22 @@
     }
     .nav-link.active {
         background-color: rgba(255, 255, 255, 0.2);
+    }
+    .nav-link-logout {
+        font-size: 0.93em;
+        padding: 0.4em 0.8em;
+        min-width: 60px;
+        color: #e74c3c !important;
+        font-weight: 600;
+        margin-left: 10px;
+        background: rgba(231,76,60,0.08);
+        border: 1px solid rgba(231,76,60,0.18);
+        transition: background 0.2s, color 0.2s, border 0.2s;
+    }
+    .nav-link-logout:hover, .nav-link-logout:focus {
+        background: #e74c3c;
+        color: #fff !important;
+        border: 1px solid #e74c3c;
     }
     </style>
 </body>

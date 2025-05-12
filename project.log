@@ -1,0 +1,26 @@
+2025-05-12 08:52:25,313 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:52:25] "[32mPOST /admin/logs/clear HTTP/1.1[0m" 302 -
+2025-05-12 08:52:25,611 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:52:25] "GET /admin/logs HTTP/1.1" 200 -
+2025-05-12 08:52:25,966 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:52:25] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:52:25,966 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:52:25] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:53:41,162 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:41] "GET /admin/logs HTTP/1.1" 200 -
+2025-05-12 08:53:41,189 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:41] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:53:41,412 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:41] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:53:41,794 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:41] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:53:45,993 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:45] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 08:53:46,284 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:46] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:53:46,331 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:46] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:53:48,892 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:48] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 08:53:48,917 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:48] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:53:49,161 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:49] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:53:49,481 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:49] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 08:53:51,589 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 08:53:51,593 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:51] "GET / HTTP/1.1" 200 -
+2025-05-12 08:53:51,898 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:51] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:53:51,947 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:53:51] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 08:54:39,365 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 08:54:39,365 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:54:39] "GET / HTTP/1.1" 200 -
+2025-05-12 08:54:39,404 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:54:39] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:54:39,603 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:54:39] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:54:39,930 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:54:39] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -

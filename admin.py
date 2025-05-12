@@ -6,6 +6,7 @@ import psycopg2
 from db import connection_pool
 from functools import wraps
 from datetime import datetime, timedelta
+import os
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -143,4 +144,30 @@ def toggle_admin(user_id):
     finally:
         cur.close()
         connection_pool.putconn(conn)
-    return redirect(url_for('admin.users')) 
+    return redirect(url_for('admin.users'))
+
+@bp.route('/logs')
+@login_required
+@admin_required
+def logs():
+    log_path = os.getenv('LOG_FILE_PATH', 'project.log')
+    try:
+        with open(log_path, encoding='utf-8') as f:
+            log_content = f.read()
+    except Exception as e:
+        log_content = f'Ошибка при чтении лога: {e}'
+    return render_template('admin_logs.html', log_content=log_content)
+
+@bp.route('/logs/clear', methods=['POST'])
+@login_required
+@admin_required
+def clear_logs():
+    import os
+    log_path = os.getenv('LOG_FILE_PATH', 'project.log')
+    try:
+        with open(log_path, 'w', encoding='utf-8') as f:
+            f.write('')
+        flash('Журнал логов очищён', 'success')
+    except Exception as e:
+        flash(f'Ошибка при очистке лога: {e}', 'danger')
+    return redirect(url_for('admin.logs')) 

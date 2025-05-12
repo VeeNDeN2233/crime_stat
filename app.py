@@ -1,20 +1,35 @@
+import os
+import logging
 from flask import Flask, render_template, jsonify, request
 from flask_caching import Cache
 from db import get_db_connection, release_db_connection
-import os
 from dotenv import load_dotenv
-import logging
 from flask_login import LoginManager, login_required, current_user
 from models import get_user_by_id
 from auth import bp as auth_bp
 from admin import bp as admin_bp
 
-# Настройка логирования
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+log_path = os.getenv('LOG_FILE_PATH', 'project.log')
+file_handler = logging.FileHandler(log_path, encoding='utf-8')
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)
+root_logger.addHandler(file_handler)
+
+# Для вывода в консоль (опционально)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+root_logger.addHandler(console_handler)
+
 logger = logging.getLogger(__name__)
+
+# Явно перенаправляем werkzeug логгер в root
+werkzeug_logger = logging.getLogger('werkzeug')
+werkzeug_logger.setLevel(logging.INFO)
+# (handlers уже есть у root_logger)
 
 # Load environment variables
 load_dotenv()
@@ -63,6 +78,13 @@ app.register_blueprint(admin_bp)
 @app.route('/')
 @login_required
 def index():
+    # Диагностика: выводим обработчики логгера
+    for handler in logger.handlers:
+        logger.info(f'Handler: {handler}')
+    # Прямая запись в файл для проверки
+    with open('project.log', 'a', encoding='utf-8') as f:
+        f.write('DIRECT WRITE TEST: user: %s\n' % (current_user.username if current_user.is_authenticated else 'anonymous'))
+    logger.info('Index page accessed by user: %s', current_user.username if current_user.is_authenticated else 'anonymous')
     return render_template('index.html')
 
 # Страница добавления нового преступления
