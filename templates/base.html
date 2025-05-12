@@ -37,6 +37,12 @@
             Администратор
         </a>
     </div>
+    {% elif current_user.is_authenticated %}
+    <div class="admin-button-container">
+        <div class="admin-link" style="pointer-events: none; opacity: 0.92;">
+            Вы вошли как: <span style="font-weight:700;">{{ current_user.username }}</span>
+        </div>
+    </div>
     {% endif %}
     <main class="animate-fade-in">
         {% block content %}{% endblock %}

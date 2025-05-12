@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import get_user_by_id, get_user_by_username, User
 from werkzeug.security import generate_password_hash
@@ -170,4 +170,286 @@ def clear_logs():
         flash('Журнал логов очищён', 'success')
     except Exception as e:
         flash(f'Ошибка при очистке лога: {e}', 'danger')
-    return redirect(url_for('admin.logs')) 
+    return redirect(url_for('admin.logs'))
+
+@bp.route('/directories')
+@login_required
+@admin_required
+def directories():
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    cur.execute("SELECT id, name, address, phone FROM departments ORDER BY id")
+    departments = cur.fetchall()
+    cur.execute("SELECT id, name, description FROM districts ORDER BY id")
+    districts = cur.fetchall()
+    cur.execute("SELECT id, full_name, rank, position, phone, department_id FROM duty_officers ORDER BY id")
+    duty_officers = cur.fetchall()
+    cur.execute("SELECT id, full_name, rank, position, phone, department_id FROM officers ORDER BY id")
+    officers = cur.fetchall()
+    # Для выпадающих списков отделов
+    cur.execute("SELECT id, name FROM departments ORDER BY name")
+    departments_list = cur.fetchall()
+    cur.close()
+    connection_pool.putconn(conn)
+    return render_template('admin_directories.html', departments=departments, districts=districts, duty_officers=duty_officers, officers=officers, departments_list=departments_list)
+
+@bp.route('/directories/departments/add', methods=['POST'])
+@login_required
+@admin_required
+def add_department():
+    name = request.form.get('name')
+    address = request.form.get('address')
+    phone = request.form.get('phone')
+    if not name:
+        flash('Название не может быть пустым', 'danger')
+        return redirect(url_for('admin.directories'))
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("INSERT INTO departments (name, address, phone) VALUES (%s, %s, %s)", (name, address, phone))
+        conn.commit()
+        flash('Отдел добавлен', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+@bp.route('/directories/departments/edit/<int:dep_id>', methods=['POST'])
+@login_required
+@admin_required
+def edit_department(dep_id):
+    name = request.form.get('name')
+    address = request.form.get('address')
+    phone = request.form.get('phone')
+    if not name:
+        flash('Название не может быть пустым', 'danger')
+        return redirect(url_for('admin.directories'))
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("UPDATE departments SET name=%s, address=%s, phone=%s WHERE id=%s", (name, address, phone, dep_id))
+        conn.commit()
+        flash('Отдел обновлён', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+@bp.route('/directories/departments/delete/<int:dep_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_department(dep_id):
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM departments WHERE id=%s", (dep_id,))
+        conn.commit()
+        flash('Отдел удалён', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+# DISTRICTS
+@bp.route('/directories/districts/add', methods=['POST'])
+@login_required
+@admin_required
+def add_district():
+    name = request.form.get('name')
+    description = request.form.get('description')
+    if not name:
+        flash('Название не может быть пустым', 'danger')
+        return redirect(url_for('admin.directories'))
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("INSERT INTO districts (name, description) VALUES (%s, %s)", (name, description))
+        conn.commit()
+        flash('Район добавлен', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+@bp.route('/directories/districts/edit/<int:dist_id>', methods=['POST'])
+@login_required
+@admin_required
+def edit_district(dist_id):
+    name = request.form.get('name')
+    description = request.form.get('description')
+    if not name:
+        flash('Название не может быть пустым', 'danger')
+        return redirect(url_for('admin.directories'))
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("UPDATE districts SET name=%s, description=%s WHERE id=%s", (name, description, dist_id))
+        conn.commit()
+        flash('Район обновлён', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+@bp.route('/directories/districts/delete/<int:dist_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_district(dist_id):
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM districts WHERE id=%s", (dist_id,))
+        conn.commit()
+        flash('Район удалён', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+# DUTY_OFFICERS
+@bp.route('/directories/duty_officers/add', methods=['POST'])
+@login_required
+@admin_required
+def add_duty_officer():
+    full_name = request.form.get('full_name')
+    rank = request.form.get('rank')
+    position = request.form.get('position')
+    phone = request.form.get('phone')
+    department_id = request.form.get('department_id') or None
+    if not full_name:
+        flash('ФИО не может быть пустым', 'danger')
+        return redirect(url_for('admin.directories'))
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("INSERT INTO duty_officers (full_name, rank, position, phone, department_id) VALUES (%s, %s, %s, %s, %s)", (full_name, rank, position, phone, department_id if department_id else None))
+        conn.commit()
+        flash('Дежурный офицер добавлен', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+@bp.route('/directories/duty_officers/edit/<int:off_id>', methods=['POST'])
+@login_required
+@admin_required
+def edit_duty_officer(off_id):
+    full_name = request.form.get('full_name')
+    rank = request.form.get('rank')
+    position = request.form.get('position')
+    phone = request.form.get('phone')
+    department_id = request.form.get('department_id') or None
+    if not full_name:
+        flash('ФИО не может быть пустым', 'danger')
+        return redirect(url_for('admin.directories'))
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("UPDATE duty_officers SET full_name=%s, rank=%s, position=%s, phone=%s, department_id=%s WHERE id=%s", (full_name, rank, position, phone, department_id if department_id else None, off_id))
+        conn.commit()
+        flash('Дежурный офицер обновлён', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+@bp.route('/directories/duty_officers/delete/<int:off_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_duty_officer(off_id):
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM duty_officers WHERE id=%s", (off_id,))
+        conn.commit()
+        flash('Дежурный офицер удалён', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+# OFFICERS
+@bp.route('/directories/officers/add', methods=['POST'])
+@login_required
+@admin_required
+def add_officer():
+    full_name = request.form.get('full_name')
+    rank = request.form.get('rank')
+    position = request.form.get('position')
+    phone = request.form.get('phone')
+    department_id = request.form.get('department_id') or None
+    if not full_name:
+        flash('ФИО не может быть пустым', 'danger')
+        return redirect(url_for('admin.directories'))
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("INSERT INTO officers (full_name, rank, position, phone, department_id) VALUES (%s, %s, %s, %s, %s)", (full_name, rank, position, phone, department_id if department_id else None))
+        conn.commit()
+        flash('Офицер добавлен', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+@bp.route('/directories/officers/edit/<int:off_id>', methods=['POST'])
+@login_required
+@admin_required
+def edit_officer(off_id):
+    full_name = request.form.get('full_name')
+    rank = request.form.get('rank')
+    position = request.form.get('position')
+    phone = request.form.get('phone')
+    department_id = request.form.get('department_id') or None
+    if not full_name:
+        flash('ФИО не может быть пустым', 'danger')
+        return redirect(url_for('admin.directories'))
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("UPDATE officers SET full_name=%s, rank=%s, position=%s, phone=%s, department_id=%s WHERE id=%s", (full_name, rank, position, phone, department_id if department_id else None, off_id))
+        conn.commit()
+        flash('Офицер обновлён', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories'))
+
+@bp.route('/directories/officers/delete/<int:off_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_officer(off_id):
+    conn = connection_pool.getconn()
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM officers WHERE id=%s", (off_id,))
+        conn.commit()
+        flash('Офицер удалён', 'success')
+    except Exception as e:
+        flash(f'Ошибка: {e}', 'danger')
+    finally:
+        cur.close()
+        connection_pool.putconn(conn)
+    return redirect(url_for('admin.directories')) 

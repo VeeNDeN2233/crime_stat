@@ -24,3 +24,390 @@ DIRECT WRITE TEST: user: admin
 2025-05-12 08:54:39,404 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:54:39] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
 2025-05-12 08:54:39,603 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:54:39] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
 2025-05-12 08:54:39,930 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:54:39] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:55:34,186 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:55:34] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 08:55:34,488 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:55:34] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:55:34,543 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:55:34] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 08:55:34,836 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:55:34] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:55:34,836 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         ORDER BY i.incident_date DESC, i.incident_time DESC with params: []
+2025-05-12 08:55:34,855 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:55:34] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 08:55:47,698 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:55:47] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 08:55:47,805 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:55:47] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:55:47,962 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:55:47] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:56:04,936 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:56:04] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 08:56:05,235 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:56:05] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:56:05,282 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:56:05] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:56:16,922 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:56:16] "GET /admin/logs HTTP/1.1" 200 -
+2025-05-12 08:56:17,009 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:56:17] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:56:17,181 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:56:17] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:56:19,205 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:56:19] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 08:56:19,508 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:56:19] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:56:19,571 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:56:19] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:59:17,964 - werkzeug - INFO -  * Detected change in 'C:\\kirin\\admin.py', reloading
+2025-05-12 08:59:18,006 - werkzeug - INFO -  * Restarting with stat
+2025-05-12 08:59:18,630 - werkzeug - WARNING -  * Debugger is active!
+2025-05-12 08:59:18,655 - werkzeug - INFO -  * Debugger PIN: 112-768-633
+2025-05-12 08:59:58,041 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:59:58] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 08:59:58,181 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:59:58] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 08:59:58,271 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:59:58] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 08:59:58,625 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 08:59:58] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:00:02,705 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:02] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 09:00:03,008 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:03] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:00:03,039 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:03] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:00:03,431 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:03] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:00:03,801 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:03] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 09:00:04,114 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:04] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:00:04,129 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:04] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 09:00:05,723 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 09:00:05,725 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:05] "GET / HTTP/1.1" 200 -
+2025-05-12 09:00:05,863 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:05] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:00:05,980 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:05] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:00:07,491 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:07] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:00:07,804 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:07] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:00:07,863 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:07] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:00:08,143 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:08] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:00:08,155 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         ORDER BY i.incident_date DESC, i.incident_time DESC with params: []
+2025-05-12 09:00:08,163 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:08] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:00:08,974 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:08] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 09:00:09,081 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:09] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:00:09,220 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:09] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:00:13,308 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:13] "GET /admin/logs HTTP/1.1" 200 -
+2025-05-12 09:00:13,609 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:13] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:00:13,673 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:13] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:00:59,166 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:59] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 09:00:59,202 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:59] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:00:59,431 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:59] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:00:59,803 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:00:59] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:01:01,963 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:01:01] "GET /admin/directories HTTP/1.1" 200 -
+2025-05-12 09:01:02,261 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:01:02] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:01:02,309 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:01:02] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:03:52,187 - werkzeug - INFO -  * Detected change in 'C:\\kirin\\admin.py', reloading
+2025-05-12 09:03:52,230 - werkzeug - INFO -  * Restarting with stat
+2025-05-12 09:03:52,953 - werkzeug - WARNING -  * Debugger is active!
+2025-05-12 09:03:52,971 - werkzeug - INFO -  * Debugger PIN: 112-768-633
+2025-05-12 09:03:59,712 - werkzeug - INFO -  * Detected change in 'C:\\kirin\\admin.py', reloading
+2025-05-12 09:03:59,763 - werkzeug - INFO -  * Restarting with stat
+2025-05-12 09:04:00,637 - werkzeug - WARNING -  * Debugger is active!
+2025-05-12 09:04:00,637 - werkzeug - INFO -  * Debugger PIN: 112-768-633
+2025-05-12 09:04:34,209 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:04:34] "GET /admin/directories HTTP/1.1" 200 -
+2025-05-12 09:04:34,369 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:04:34] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:04:34,438 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:04:34] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:04:35,070 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:04:35] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:24:11,367 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-12 09:24:11,367 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-12 09:24:11,372 - werkzeug - INFO -  * Restarting with stat
+2025-05-12 09:24:12,258 - werkzeug - WARNING -  * Debugger is active!
+2025-05-12 09:24:12,269 - werkzeug - INFO -  * Debugger PIN: 112-768-633
+2025-05-12 09:24:13,018 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:24:13] "GET /admin/directories HTTP/1.1" 200 -
+2025-05-12 09:24:13,215 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:24:13] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:24:13,237 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:24:13] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:24:14,326 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:24:14] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:26:28,055 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:26:28] "GET /admin/directories HTTP/1.1" 200 -
+2025-05-12 09:26:28,119 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:26:28] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:26:28,297 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:26:28] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:26:29,067 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:26:29] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:28:26,094 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:28:26] "GET /admin/directories HTTP/1.1" 200 -
+2025-05-12 09:28:26,148 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:28:26] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:28:26,356 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:28:26] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:28:27,196 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:28:27] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:31:07,458 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:07] "GET /admin/directories HTTP/1.1" 200 -
+2025-05-12 09:31:07,518 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:07] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:31:07,692 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:07] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:31:08,441 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:08] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 09:31:12,945 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 09:31:12,949 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:12] "GET / HTTP/1.1" 200 -
+2025-05-12 09:31:13,262 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:13] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:31:13,313 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:13] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:31:14,774 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:14] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:31:14,897 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:14] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:31:15,041 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:15] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:31:15,134 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:15] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:31:15,302 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         ORDER BY i.incident_date DESC, i.incident_time DESC with params: []
+2025-05-12 09:31:15,306 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:15] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:31:15,592 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:15] "GET /add-crime HTTP/1.1" 200 -
+2025-05-12 09:31:15,901 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:15] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:31:15,948 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:15] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:31:16,243 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:16] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:31:16,247 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:16] "GET /api/officers HTTP/1.1" 200 -
+2025-05-12 09:31:17,672 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:17] "GET /admin/users HTTP/1.1" 200 -
+2025-05-12 09:31:17,779 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:17] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:31:17,914 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:17] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:31:20,186 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:20] "GET /admin/directories HTTP/1.1" 200 -
+2025-05-12 09:31:20,482 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:20] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:31:20,546 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:31:20] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 09:32:29,824 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 09:32:29,825 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:32:29] "GET / HTTP/1.1" 200 -
+2025-05-12 09:32:29,943 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:32:29] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:32:30,076 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:32:30] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:32:31,424 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:32:31] "GET /patrol-forecast HTTP/1.1" 200 -
+2025-05-12 09:32:31,724 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:32:31] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:32:31,777 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:32:31] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 09:33:29,512 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 09:33:29,513 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:33:29] "GET / HTTP/1.1" 200 -
+2025-05-12 09:33:29,665 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:33:29] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:33:29,773 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:33:29] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:33:31,549 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:33:31] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:33:31,854 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:33:31] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:33:31,905 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:33:31] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:33:32,188 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:33:32] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:33:32,189 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:33:32] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:34:37,541 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:34:37] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:34:37,571 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:34:37] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:34:37,793 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:34:37] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:34:38,050 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:34:38] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:34:38,056 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:34:38] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:34:38,376 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:34:38] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:36:12,872 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:36:12] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:36:12,908 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:36:12] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:36:13,121 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:36:13] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:36:13,390 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:36:13] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:36:13,390 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:36:13] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:36:26,185 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:36:26] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:37:17,594 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:37:17] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:37:17,901 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:37:17] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:37:17,936 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:37:17] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:37:18,248 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:37:18] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:37:18,248 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         ORDER BY i.incident_date DESC, i.incident_time DESC with params: []
+2025-05-12 09:37:18,264 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:37:18] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:37:18,560 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:37:18] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:38:19,836 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:38:19] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:38:19,874 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:38:19] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:38:20,105 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:38:20] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:38:20,374 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:38:20] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:38:20,376 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:38:20] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:38:33,036 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:38:33] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:39:38,238 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:39:38] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:39:38,281 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:39:38] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:39:38,495 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:39:38] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:39:38,793 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:39:38] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:39:38,793 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:39:38] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:39:38,856 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:39:38] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:41:05,488 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:41:05] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:41:05,532 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:41:05] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:41:05,741 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:41:05] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:41:06,096 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:41:06] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:41:06,096 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:41:06] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:41:06,154 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:41:06] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:43:28,786 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:43:28] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:43:28,830 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:43:28] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:43:29,041 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:43:29] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:43:29,313 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         ORDER BY i.incident_date DESC, i.incident_time DESC with params: []
+2025-05-12 09:43:29,315 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:43:29] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:43:29,330 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:43:29] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:43:40,808 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:43:40] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:44:20,823 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:44:20] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:44:21,128 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:44:21] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:44:21,176 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:44:21] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:44:21,478 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:44:21] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:44:21,480 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:44:21] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:44:33,372 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:44:33] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:45:17,444 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:45:17] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:45:17,751 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:45:17] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:45:17,798 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:45:17] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:45:18,376 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:45:18] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:45:18,376 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:45:18] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:45:18,522 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:45:18] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:45:50,254 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-12 09:45:50,254 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-12 09:45:50,261 - werkzeug - INFO -  * Restarting with stat
+2025-05-12 09:45:51,191 - werkzeug - WARNING -  * Debugger is active!
+2025-05-12 09:45:51,201 - werkzeug - INFO -  * Debugger PIN: 112-768-633
+2025-05-12 09:48:46,104 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:48:46] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:48:46,249 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:48:46] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:48:46,348 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:48:46] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:48:46,670 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:48:46] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:48:46,683 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         ORDER BY i.incident_date DESC, i.incident_time DESC with params: []
+2025-05-12 09:48:46,693 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:48:46] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:48:46,733 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:48:46] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:50:15,999 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:50:15] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:50:16,040 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:50:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:50:16,254 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:50:16] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:50:16,482 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:50:16] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:50:16,485 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:50:16] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:50:16,913 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:50:16] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:51:52,092 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:51:52] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:51:52,129 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:51:52] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:51:52,347 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:51:52] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:51:52,600 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:51:52] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:51:52,603 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:51:52] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:52:04,336 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:52:04] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:53:48,781 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:53:48] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:53:48,823 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:53:48] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:53:49,041 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:53:49] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:53:49,328 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:53:49] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:53:49,328 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         ORDER BY i.incident_date DESC, i.incident_time DESC with params: []
+2025-05-12 09:53:49,333 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:53:49] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:53:49,650 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:53:49] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:54:39,366 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:54:39] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:54:39,669 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:54:39] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:54:39,717 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:54:39] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:54:40,002 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:54:40] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:54:40,004 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:54:40] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:54:51,892 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:54:51] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:55:33,472 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:55:33] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:55:33,776 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:55:33] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-05-12 09:55:33,830 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:55:33] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:55:34,119 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:55:34] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:55:34,122 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:55:34] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:55:49,608 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:55:49] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:58:09,783 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:09] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 09:58:09,830 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:09] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:58:10,035 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:10] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 09:58:10,330 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:10] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 09:58:10,332 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:10] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:58:10,665 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:10] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:58:11,642 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:11] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-05-12 09:58:11,949 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:11] "GET /login HTTP/1.1" 200 -
+2025-05-12 09:58:12,297 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:12] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:58:12,298 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:12] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:58:18,789 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:18] "[32mPOST /login HTTP/1.1[0m" 302 -
+DIRECT WRITE TEST: user: roma
+2025-05-12 09:58:18,795 - __main__ - INFO - Index page accessed by user: roma
+2025-05-12 09:58:18,798 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:18] "GET / HTTP/1.1" 200 -
+2025-05-12 09:58:19,151 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:19] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:58:19,152 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:19] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:58:35,779 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:35] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-05-12 09:58:36,092 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:36] "GET /login HTTP/1.1" 200 -
+2025-05-12 09:58:36,438 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:36] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:58:36,439 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:36] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 09:58:37,905 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:37] "[32mPOST /login HTTP/1.1[0m" 302 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 09:58:38,206 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 09:58:38,207 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:38] "GET / HTTP/1.1" 200 -
+2025-05-12 09:58:38,554 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:38] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 09:58:38,555 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 09:58:38] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 10:01:02,454 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 10:01:02,461 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:01:02] "GET / HTTP/1.1" 200 -
+2025-05-12 10:01:02,492 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:01:02] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 10:01:02,723 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:01:02] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 10:01:03,095 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:01:03] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 10:02:25,889 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:25] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 10:02:26,005 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:26] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 10:02:26,142 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:26] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 10:02:26,254 - __main__ - INFO - Executing query: 
+            SELECT 
+                i.incident_date,
+                i.incident_time,
+                i.article,
+                i.kusp_number,
+                i.address,
+                d.name as department_name,
+                o.full_name as officer_name,
+                o.phone as officer_phone
+            FROM incidents i
+            LEFT JOIN departments d ON i.department_id = d.id
+            LEFT JOIN duty_officers o ON i.duty_officer_id = o.id
+            WHERE 1=1
+         ORDER BY i.incident_date DESC, i.incident_time DESC with params: []
+2025-05-12 10:02:26,259 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:26] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 10:02:26,443 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:26] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+DIRECT WRITE TEST: user: admin
+2025-05-12 10:02:29,773 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 10:02:29,779 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:29] "GET / HTTP/1.1" 200 -
+2025-05-12 10:02:30,079 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:30] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 10:02:30,145 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:30] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+DIRECT WRITE TEST: user: admin

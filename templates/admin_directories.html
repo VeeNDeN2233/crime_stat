@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block title %}Справочники{% endblock %}
+{% block content %}
+<script>document.body.classList.add('admin-page');</script>
+<div class="statistics-container">
+    <h1>Справочники</h1>
+    <div class="card" style="margin-bottom: 24px;">
+        <div class="card-header">
+            <h3>Отделы полиции</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('admin.add_department') }}" class="form-container">
+                <div class="form-title">Добавить отдел</div>
+                <div class="form-group">
+                    <label for="dep_name">Название отдела</label>
+                    <input type="text" name="name" id="dep_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="dep_address">Адрес</label>
+                    <input type="text" name="address" id="dep_address">
+                </div>
+                <div class="form-group">
+                    <label for="dep_phone">Телефон</label>
+                    <input type="text" name="phone" id="dep_phone">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table crimes-table" id="departments-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Название</th>
+                            <th>Адрес</th>
+                            <th>Телефон</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for dep in departments %}
+                        <tr>
+                            <form method="post" action="{{ url_for('admin.edit_department', dep_id=dep[0]) }}" class="form-inline">
+                                <td>{{ dep[0] }}</td>
+                                <td><input type="text" name="name" value="{{ dep[1] }}" required class="form-group-input"></td>
+                                <td><input type="text" name="address" value="{{ dep[2] }}" class="form-group-input"></td>
+                                <td><input type="text" name="phone" value="{{ dep[3] }}" class="form-group-input"></td>
+                                <td class="form-actions">
+                                    <button type="submit" class="btn btn-info btn-sm">Сохранить</button>
+                            </form>
+                            <form method="post" action="{{ url_for('admin.delete_department', dep_id=dep[0]) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить отдел?')">Удалить</button>
+                            </form>
+                                </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom: 24px;">
+        <div class="card-header">
+            <h3>Районы города</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('admin.add_district') }}" class="form-container">
+                <div class="form-title">Добавить район</div>
+                <div class="form-group">
+                    <label for="dist_name">Название района</label>
+                    <input type="text" name="name" id="dist_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="dist_description">Описание</label>
+                    <input type="text" name="description" id="dist_description">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table crimes-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Название</th>
+                            <th>Описание</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for dist in districts %}
+                        <tr>
+                            <form method="post" action="{{ url_for('admin.edit_district', dist_id=dist[0]) }}" class="form-inline">
+                                <td>{{ dist[0] }}</td>
+                                <td><input type="text" name="name" value="{{ dist[1] }}" required class="form-group-input"></td>
+                                <td><input type="text" name="description" value="{{ dist[2] }}" class="form-group-input"></td>
+                                <td class="form-actions">
+                                    <button type="submit" class="btn btn-info btn-sm">Сохранить</button>
+                            </form>
+                            <form method="post" action="{{ url_for('admin.delete_district', dist_id=dist[0]) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить район?')">Удалить</button>
+                            </form>
+                                </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom: 24px;">
+        <div class="card-header">
+            <h3>Дежурные офицеры</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('admin.add_duty_officer') }}" class="form-container">
+                <div class="form-title">Добавить дежурного офицера</div>
+                <div class="form-group">
+                    <label for="duty_name">ФИО дежурного офицера</label>
+                    <input type="text" name="full_name" id="duty_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="duty_rank">Звание</label>
+                    <input type="text" name="rank" id="duty_rank">
+                </div>
+                <div class="form-group">
+                    <label for="duty_position">Должность</label>
+                    <input type="text" name="position" id="duty_position">
+                </div>
+                <div class="form-group">
+                    <label for="duty_phone">Телефон</label>
+                    <input type="text" name="phone" id="duty_phone">
+                </div>
+                <div class="form-group">
+                    <label for="duty_department">Отдел</label>
+                    <select name="department_id" id="duty_department">
+                        <option value="">-</option>
+                        {% for dep in departments_list %}
+                            <option value="{{ dep[0] }}">{{ dep[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table crimes-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ФИО</th>
+                            <th>Звание</th>
+                            <th>Должность</th>
+                            <th>Телефон</th>
+                            <th>Отдел</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for duty in duty_officers %}
+                        <tr>
+                            <form method="post" action="{{ url_for('admin.edit_duty_officer', off_id=duty[0]) }}" class="form-inline">
+                                <td>{{ duty[0] }}</td>
+                                <td><input type="text" name="full_name" value="{{ duty[1] }}" required class="form-group-input"></td>
+                                <td><input type="text" name="rank" value="{{ duty[2] }}" class="form-group-input"></td>
+                                <td><input type="text" name="position" value="{{ duty[3] }}" class="form-group-input"></td>
+                                <td><input type="text" name="phone" value="{{ duty[4] }}" class="form-group-input"></td>
+                                <td>
+                                    <select name="department_id" class="form-group-input">
+                                        <option value="">-</option>
+                                        {% for dep in departments_list %}
+                                            <option value="{{ dep[0] }}" {% if duty[5] == dep[0] %}selected{% endif %}>{{ dep[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="form-actions">
+                                    <button type="submit" class="btn btn-info btn-sm">Сохранить</button>
+                            </form>
+                            <form method="post" action="{{ url_for('admin.delete_duty_officer', off_id=duty[0]) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить дежурного офицера?')">Удалить</button>
+                            </form>
+                                </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom: 24px;">
+        <div class="card-header">
+            <h3>Офицеры</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('admin.add_officer') }}" class="form-container">
+                <div class="form-title">Добавить офицера</div>
+                <div class="form-group">
+                    <label for="officer_name">ФИО офицера</label>
+                    <input type="text" name="full_name" id="officer_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="officer_rank">Звание</label>
+                    <input type="text" name="rank" id="officer_rank">
+                </div>
+                <div class="form-group">
+                    <label for="officer_position">Должность</label>
+                    <input type="text" name="position" id="officer_position">
+                </div>
+                <div class="form-group">
+                    <label for="officer_phone">Телефон</label>
+                    <input type="text" name="phone" id="officer_phone">
+                </div>
+                <div class="form-group">
+                    <label for="officer_department">Отдел</label>
+                    <select name="department_id" id="officer_department">
+                        <option value="">-</option>
+                        {% for dep in departments_list %}
+                            <option value="{{ dep[0] }}">{{ dep[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table crimes-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ФИО</th>
+                            <th>Звание</th>
+                            <th>Должность</th>
+                            <th>Телефон</th>
+                            <th>Отдел</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for officer in officers %}
+                        <tr>
+                            <form method="post" action="{{ url_for('admin.edit_officer', off_id=officer[0]) }}" class="form-inline">
+                                <td>{{ officer[0] }}</td>
+                                <td><input type="text" name="full_name" value="{{ officer[1] }}" required class="form-group-input"></td>
+                                <td><input type="text" name="rank" value="{{ officer[2] }}" class="form-group-input"></td>
+                                <td><input type="text" name="position" value="{{ officer[3] }}" class="form-group-input"></td>
+                                <td><input type="text" name="phone" value="{{ officer[4] }}" class="form-group-input"></td>
+                                <td>
+                                    <select name="department_id" class="form-group-input">
+                                        <option value="">-</option>
+                                        {% for dep in departments_list %}
+                                            <option value="{{ dep[0] }}" {% if officer[5] == dep[0] %}selected{% endif %}>{{ dep[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="form-actions">
+                                    <button type="submit" class="btn btn-info btn-sm">Сохранить</button>
+                            </form>
+                            <form method="post" action="{{ url_for('admin.delete_officer', off_id=officer[0]) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить офицера?')">Удалить</button>
+                            </form>
+                                </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Здесь будут остальные справочники -->
+</div>
+{% endblock %} 

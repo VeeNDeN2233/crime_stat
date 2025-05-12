@@ -37,26 +37,28 @@
 </div>
 
 <div class="content-wrapper">
-    <div class="table-container">
-        <table class="crimes-table">
-            <thead>
-                <tr>
-                    <th style="width: 100px;">Дата</th>
-                    <th style="width: 80px;">Время</th>
-                    <th style="width: 100px;">Статья УК РФ</th>
-                    <th style="width: 120px;">Номер КУСП</th>
-                    <th style="width: 200px;">Адрес</th>
-                    <th style="width: 150px;">Отдел полиции</th>
-                    <th style="width: 150px;">Дежурный</th>
-                    <th style="width: 120px;">Телефон дежурного</th>
-                </tr>
-            </thead>
-            <tbody id="crime-table">
-                <!-- Данные будут загружаться через JavaScript -->
-            </tbody>
-        </table>
+    <div class="table-outer">
+        <div class="table-scrollbar-top"></div>
+        <div class="table-container">
+            <table class="crimes-table">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Дата</th>
+                        <th style="width: 80px;">Время</th>
+                        <th style="width: 100px;">Статья УК РФ</th>
+                        <th style="width: 120px;">Номер КУСП</th>
+                        <th style="width: 200px;">Адрес</th>
+                        <th style="width: 150px;">Отдел полиции</th>
+                        <th style="width: 150px;">Дежурный</th>
+                        <th style="width: 120px;">Телефон дежурного</th>
+                    </tr>
+                </thead>
+                <tbody id="crime-table">
+                    <!-- Данные будут загружаться через JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
-
     <div id="map" class="map-container"></div>
 </div>
 
@@ -190,6 +192,8 @@ async function loadData(filters = {}) {
                 checkZoomRange: true
             });
         }
+
+        afterTableDataLoaded();
     } catch (error) {
         const table = document.getElementById('crime-table');
         table.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red;">Ошибка при загрузке данных: ${error.message}</td></tr>`;
@@ -264,6 +268,64 @@ document.addEventListener('DOMContentLoaded', function() {
     ymaps.ready(initMap);
     loadDepartments();
     loadData();
+});
+
+// Синхронизация верхнего скроллбара и таблицы
+function syncTableScrollbar() {
+    const topScroll = document.querySelector('.table-scrollbar-top');
+    const tableContainer = document.querySelector('.table-container');
+    if (topScroll && tableContainer) {
+        const table = tableContainer.querySelector('table');
+        if (table) {
+            // Устанавливаем ширину скроллбара как у контейнера
+            topScroll.style.width = tableContainer.clientWidth + 'px';
+            // Внутренний div для ширины
+            let inner = topScroll.firstChild;
+            if (!inner) {
+                inner = document.createElement('div');
+                topScroll.appendChild(inner);
+            }
+            inner.style.height = '1px';
+            inner.style.width = table.scrollWidth + 'px';
+        }
+    }
+}
+
+(function() {
+    const topScroll = document.querySelector('.table-scrollbar-top');
+    const tableContainer = document.querySelector('.table-container');
+    if (topScroll && tableContainer) {
+        syncTableScrollbar();
+        window.addEventListener('resize', syncTableScrollbar);
+        // Синхронизация скроллов
+        topScroll.addEventListener('scroll', function() {
+            tableContainer.scrollLeft = topScroll.scrollLeft;
+        });
+        tableContainer.addEventListener('scroll', function() {
+            topScroll.scrollLeft = tableContainer.scrollLeft;
+        });
+    }
+})();
+
+// После загрузки данных пересинхронизировать скроллбар
+function afterTableDataLoaded() {
+    syncTableScrollbar();
+    setTimeout(syncTableScrollbar, 0);
+    setTimeout(syncTableScrollbar, 100);
+}
+
+// Автоматическая синхронизация при изменении таблицы
+window.addEventListener('DOMContentLoaded', function() {
+    const tableContainer = document.querySelector('.table-container');
+    if (tableContainer) {
+        const table = tableContainer.querySelector('table');
+        if (table) {
+            const observer = new MutationObserver(() => {
+                syncTableScrollbar();
+            });
+            observer.observe(table, { childList: true, subtree: true, characterData: true });
+        }
+    }
 });
 </script>
 {% endblock %}
