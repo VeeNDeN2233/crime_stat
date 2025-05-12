@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import get_user_by_id, get_user_by_username
+from models import get_user_by_id, get_user_by_username, User
 from werkzeug.security import generate_password_hash
 import psycopg2
 from db import connection_pool
@@ -24,8 +24,14 @@ def admin_required(f):
 def users():
     conn = connection_pool.getconn()
     cur = conn.cursor()
-    cur.execute("SELECT id, username, is_admin, is_blocked, blocked_until, created_at FROM users ORDER BY id")
-    users = cur.fetchall()
+    cur.execute("SELECT id, username, password_hash, is_admin, is_blocked, blocked_until, created_at FROM users ORDER BY id")
+    rows = cur.fetchall()
+    users = []
+    for row in rows:
+        # row: id, username, password_hash, is_admin, is_blocked, blocked_until, created_at
+        user = User(row[0], row[1], row[2], row[3], row[4], row[5])
+        user.created_at = row[6]
+        users.append(user)
     cur.close()
     connection_pool.putconn(conn)
     return render_template('users_admin.html', users=users)

@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from db import connection_pool
+from datetime import datetime
 
 class User(UserMixin):
     def __init__(self, id, username, password_hash, is_admin, is_blocked, blocked_until):
@@ -16,7 +17,11 @@ class User(UserMixin):
 
     @property
     def is_active(self):
-        return not self.is_blocked
+        return not self.is_actually_blocked
+
+    @property
+    def is_actually_blocked(self):
+        return self.is_blocked and self.blocked_until and self.blocked_until > datetime.now()
 
 # Вспомогательные функции для работы с пользователями
 

@@ -53,56 +53,56 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for u in users %}
+                    {% for user in users %}
                         <tr>
-                            <td>{{ u[0] }}</td>
-                            <td>{{ u[1] }}</td>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
                             <td>
-                                {% if u[2] %}
+                                {% if user.is_admin %}
                                     <span class="badge badge-success">Да</span>
                                 {% else %}
                                     <span class="badge badge-secondary">Нет</span>
                                 {% endif %}
                             </td>
                             <td>
-                                {% if u[3] %}
+                                {% if user.is_actually_blocked %}
                                     <span class="badge badge-danger">Заблокирован</span>
                                 {% else %}
                                     <span class="badge badge-success">Активен</span>
                                 {% endif %}
                             </td>
-                            <td>{{ u[4] or '' }}</td>
-                            <td>{{ u[5] or '' }}</td>
+                            <td>{{ user.blocked_until or '' }}</td>
+                            <td>{{ user.created_at or '' }}</td>
                             <td>
                                 <div class="btn-group">
-                                    {% if not u[2] %}
-                                        <form method="post" action="{{ url_for('admin.toggle_admin', user_id=u[0]) }}" style="display:inline;">
+                                    {% if not user.is_admin %}
+                                        <form method="post" action="{{ url_for('admin.toggle_admin', user_id=user.id) }}" style="display:inline;">
                                             <button type="submit" class="btn btn-info btn-sm">Сделать админом</button>
                                         </form>
                                     {% else %}
-                                        <form method="post" action="{{ url_for('admin.toggle_admin', user_id=u[0]) }}" style="display:inline;">
+                                        <form method="post" action="{{ url_for('admin.toggle_admin', user_id=user.id) }}" style="display:inline;">
                                             <button type="submit" class="btn btn-warning btn-sm">Убрать админа</button>
                                         </form>
                                     {% endif %}
 
-                                    <form method="post" action="{{ url_for('admin.change_password', user_id=u[0]) }}" style="display:inline;">
+                                    <form method="post" action="{{ url_for('admin.change_password', user_id=user.id) }}" style="display:inline;">
                                         <input type="password" name="new_password" placeholder="Новый пароль" class="form-control-sm" style="width:120px;">
                                         <button type="submit" class="btn btn-primary btn-sm">Изменить пароль</button>
                                     </form>
 
-                                    {% if not u[3] %}
-                                        <form method="post" action="{{ url_for('admin.block_user', user_id=u[0]) }}" style="display:inline;">
+                                    {% if not user.is_actually_blocked %}
+                                        <form method="post" action="{{ url_for('admin.block_user', user_id=user.id) }}" style="display:inline;">
                                             <input type="number" name="minutes" min="1" max="10080" placeholder="мин" class="form-control-sm" style="width:60px;">
                                             <button type="submit" class="btn btn-warning btn-sm">Блокировать</button>
                                         </form>
                                     {% else %}
-                                        <form method="post" action="{{ url_for('admin.unblock_user', user_id=u[0]) }}" style="display:inline;">
+                                        <form method="post" action="{{ url_for('admin.unblock_user', user_id=user.id) }}" style="display:inline;">
                                             <button type="submit" class="btn btn-success btn-sm">Разблокировать</button>
                                         </form>
                                     {% endif %}
 
-                                    {% if not u[2] %}
-                                        <form method="post" action="{{ url_for('admin.delete_user', user_id=u[0]) }}" style="display:inline;">
+                                    {% if not user.is_admin %}
+                                        <form method="post" action="{{ url_for('admin.delete_user', user_id=user.id) }}" style="display:inline;">
                                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить пользователя?')">Удалить</button>
                                         </form>
                                     {% endif %}
