@@ -411,3 +411,13 @@ DIRECT WRITE TEST: user: admin
 2025-05-12 10:02:30,079 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:30] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
 2025-05-12 10:02:30,145 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:30] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
 DIRECT WRITE TEST: user: admin
+2025-05-12 10:02:36,141 - __main__ - INFO - Index page accessed by user: admin
+2025-05-12 10:02:36,142 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:36] "GET / HTTP/1.1" 200 -
+2025-05-12 10:02:36,167 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:36] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 10:02:36,408 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:36] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 10:02:36,723 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:36] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
+2025-05-12 10:02:54,102 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:54] "GET /all-crimes HTTP/1.1" 200 -
+2025-05-12 10:02:54,404 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-05-12 10:02:54,468 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:54] "GET /api/departments HTTP/1.1" 200 -
+2025-05-12 10:02:54,741 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:54] "GET /api/crimes HTTP/1.1" 200 -
+2025-05-12 10:02:54,756 - werkzeug - INFO - 127.0.0.1 - - [12/May/2025 10:02:54] "[36mGET /static/images/logo.png HTTP/1.1[0m" 304 -
