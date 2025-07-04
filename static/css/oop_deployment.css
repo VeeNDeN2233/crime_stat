@@ -1,0 +1,114 @@
+/* Стили для вкладки "Расстановка сил" и других форм */
+.oop-container {
+    max-width: 900px;
+    margin: 40px auto 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 32px 36px 36px 36px;
+}
+.oop-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #222;
+}
+.oop-tabs {
+    margin-bottom: 24px;
+}
+.oop-tab-btn {
+    padding: 7px 18px;
+    border: 1px solid #bbb;
+    background: #f7f7f7;
+    border-radius: 6px 6px 0 0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.oop-tab-btn.active {
+    background: #e0e7ff;
+    border-bottom: 2px solid #3b82f6;
+    font-weight: 600;
+}
+.deployment-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.deployment-form label {
+    font-size: 1.1em;
+    margin-right: 12px;
+}
+.deployment-form input[type="date"],
+.deployment-form input[type="number"] {
+    padding: 6px 10px;
+    font-size: 1em;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    margin-left: 6px;
+}
+.deployment-table-wrapper {
+    margin-bottom: 18px;
+}
+#deployment-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 10px;
+    background: #fff;
+}
+#deployment-table th, #deployment-table td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    text-align: left;
+}
+#deployment-table th {
+    background: #f5f5f5;
+    font-weight: 600;
+}
+button, input[type="button"] {
+    padding: 7px 18px;
+    margin-right: 10px;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+button:hover, input[type="button"]:hover {
+    background: #125ea7;
+}
+#export-xlsx {
+    margin-top: 10px;
+    background: #388e3c;
+}
+#export-xlsx:hover {
+    background: #256029;
+}
+#deployment-map {
+    margin-left: 32px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    background: #f8f8f8;
+}
+#deployment-result {
+    margin-top: 18px;
+}
+@media (max-width: 900px) {
+    .oop-container {
+        padding: 18px 6px 24px 6px;
+    }
+    #deployment-map {
+        float: none;
+        margin: 20px 0 0 0;
+        width: 100% !important;
+        height: 300px !important;
+    }
+    .deployment-form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

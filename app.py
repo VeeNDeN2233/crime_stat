@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_file
 from flask_caching import Cache
 from db import get_db_connection, release_db_connection
 from dotenv import load_dotenv
@@ -8,6 +8,9 @@ from flask_login import LoginManager, login_required, current_user
 from models import get_user_by_id
 from auth import bp as auth_bp
 from admin import bp as admin_bp
+from oop import bp_oop
+import io
+import openpyxl
 
 log_path = os.getenv('LOG_FILE_PATH', 'project.log')
 file_handler = logging.FileHandler(log_path, encoding='utf-8')
@@ -70,9 +73,9 @@ login_manager.init_app(app)
 def load_user(user_id):
     return get_user_by_id(user_id)
 
-# Регистрация blueprint'ов
-app.register_blueprint(auth_bp)
+#
 app.register_blueprint(admin_bp)
+app.register_blueprint(auth_bp)
 
 # Главная страница (карта + список преступлений)
 @app.route('/')
@@ -109,7 +112,36 @@ def patrol_forecast():
 @app.route('/oop')
 @login_required
 def oop():
-    return render_template('oop.html')
+    return render_template('oop_deployment.html')
+
+@app.route('/oop/deployment')
+@login_required
+def oop_deployment_partial():
+    # Здесь будет формироваться HTML для второй вкладки (AJAX)
+    # Пока что базовая форма и таблица
+    from flask import render_template_string
+    html = '''
+    <form id="deployment-form" class="deployment-form">
+        <label>Дата: <input type="date" name="date" required></label>
+        <label>Количество личного состава: <input type="number" name="personnel" min="1" required></label>
+    </form>
+    <div class="deployment-table-wrapper">
+        <table id="deployment-table">
+            <thead>
+                <tr><th>Район</th><th>Область</th></tr>
+            </thead>
+            <tbody>
+                <!-- Динамические строки -->
+            </tbody>
+        </table>
+        <button id="add-row">Добавить запись</button>
+        <button id="calculate">Рассчитать расстановку</button>
+    </div>
+    <div id="deployment-map" style="width: 500px; height: 500px; float: right;"></div>
+    <div id="deployment-result"></div>
+    <button id="export-xlsx">Экспорт в XLSX</button>
+    '''
+    return render_template_string(html)
 
 @app.route('/statistics')
 @login_required
@@ -448,6 +480,20 @@ def get_statistics():
             cur.close()
         if conn:
             release_db_connection(conn)
+
+@app.route('/oop/export_xlsx', methods=['POST'])
+@login_required
+def export_deployment_xlsx():
+    data = request.get_json()
+    rows = data.get('rows', [])
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    for row in rows:
+        ws.append(row)
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return send_file(output, as_attachment=True, download_name='deployment.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 # Запуск сервера
 if __name__ == '__main__':

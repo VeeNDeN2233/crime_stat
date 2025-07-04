@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Расстановка сил и средств{% endblock %}
+
+{% block content %}
+<h1>Расстановка сил и средств ООП</h1>
+<div class="oop-tabs">
+    <button class="oop-tab active" id="tab-forecast">Прогноз патрулей</button>
+    <button class="oop-tab" id="tab-deployment">Расстановка сил</button>
+</div>
+<div id="oop-tab-content">
+    <!-- Контент вкладки будет подгружаться динамически -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/oop_deployment.css') }}">
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=a7836208-78bf-4cdd-b77a-e5895376bee0&lang=ru_RU" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/oop_deployment.js') }}"></script>
+{% endblock %}
