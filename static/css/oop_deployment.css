@@ -78,7 +78,20 @@ button, input[type="button"] {
     cursor: pointer;
     transition: background 0.2s;
 }
+.area-chosen{
+    display:inline-block;
+    background: #2ecc71 !important;
+    cursor: default;
+}
+.area-chosen {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: inline-block;
+}
 button:hover, input[type="button"]:hover {
+    opacity: .9;
     background: #125ea7;
 }
 #export-xlsx {
@@ -94,8 +107,109 @@ button:hover, input[type="button"]:hover {
     border-radius: 6px;
     background: #f8f8f8;
 }
+.deployment-result-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 8px;
+    background: #fff;
+}
+.deployment-result-table th, .deployment-result-table td {
+    vertical-align: top;
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+}
+.deployment-result-table th {
+    background: #e8e8e8;
+    font-weight: 600;
+}
+.deployment-result-table tbody tr:nth-child(odd) {
+    background: #fafafa;
+}
+.deployment-result-table td:nth-child(2) {
+    padding: 12px;
+}
+
+.patrol-type-group {
+    margin-bottom: 16px;
+}
+.patrol-type-group:last-child {
+    margin-bottom: 0;
+}
+
+.patrol-group {
+    margin-bottom: 12px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 6px;
+}
+.patrol-group:last-child {
+    margin-bottom: 0;
+}
+
+.patrol-group strong {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 1.05em;
+}
+
+.patrol-officers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.deployment-result-table select {
+    width: 220px;
+    flex-grow: 1;
+    padding: 4px 6px;
+    font-size: 0.95em;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+}
+/* Action buttons styling */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    height: 100%;
+}
+.action-buttons button {
+    width: 100%;
+    margin: 0;
+    padding: 8px 12px;
+    font-size: 0.95em;
+}
+.btn-edit {
+    background-color: #ffc107; /* Amber */
+    color: #000;
+}
+.btn-edit:hover {
+    background-color: #e0a800 !important;
+}
+.btn-delete {
+    background-color: #dc3545; /* Red */
+}
+.btn-delete:hover {
+    background-color: #c82333 !important;
+}
+
 #deployment-result {
     margin-top: 18px;
+}
+
+/* Floating export button so it is not hidden behind footer */
+#export-xlsx {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1050;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+#export-xlsx:hover {
+    opacity: 0.95;
 }
 @media (max-width: 900px) {
     .oop-container {

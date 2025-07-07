@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Функциональная схема проекта{% endblock %}
+
+{% block content %}
+<h1>Функциональная схема проекта</h1>
+<div class="mermaid">
+flowchart TD
+    A["Авторизация"]
+    B["Карта"]
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+</script>
+{% endblock %}

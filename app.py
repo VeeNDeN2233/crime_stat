@@ -76,6 +76,7 @@ def load_user(user_id):
 #
 app.register_blueprint(admin_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(bp_oop)
 
 # Главная страница (карта + список преступлений)
 @app.route('/')
@@ -147,6 +148,12 @@ def oop_deployment_partial():
 @login_required
 def statistics():
     return render_template('statistics.html')
+
+# Функциональная схема проекта
+@app.route('/scheme')
+@login_required
+def project_scheme():
+    return render_template('project_scheme.html')
 
 @app.route('/get_incidents', methods=['GET'])
 @cache.cached(timeout=300)  # Кэшируем на 5 минут
@@ -328,6 +335,26 @@ def add_crime_api():
         if conn:
             release_db_connection(conn)
 
+@app.route('/api/districts')
+@login_required
+def get_districts():
+    """Вернуть список районов города. Используется вкладкой расстановки сил"""
+    conn = cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT id, name FROM districts ORDER BY name")
+        districts = [{"id": row[0], "name": row[1]} for row in cur.fetchall()]
+        return jsonify(districts)
+    except Exception as e:
+        logger.error(f"Error getting districts: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            release_db_connection(conn)
+
 @app.route('/api/departments')
 def get_departments():
     conn = None
@@ -480,6 +507,70 @@ def get_statistics():
             cur.close()
         if conn:
             release_db_connection(conn)
+
+@app.route('/api/patrol-calc', methods=['POST'])
+@login_required
+def patrol_calc():
+    """Рассчитать количество пеших и мобильных патрулей пропорционально числу преступлений в районах."""
+    data = request.get_json()
+    personnel = int(data.get('personnel', 0))
+    rows = data.get('rows', [])  # [{'districtId','districtName','area'}]
+    if not rows or personnel <= 0:
+        return jsonify({"error": "Неверные данные"}), 400
+
+    district_ids = [int(r['districtId']) for r in rows]
+
+    conn = cur = None
+    crime_counts = []  # количество преступлений в каждой строке rows
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        # Считаем преступления только по району – без геометрии, чтобы избежать ошибок PostGIS
+        crimes_by_district = {did: 1 for did in district_ids}
+        try:
+            cur.execute(
+                """
+                SELECT district_id, COUNT(*)
+                FROM incidents
+                WHERE district_id = ANY(%s) AND incident_date >= NOW() - INTERVAL '30 days'
+                GROUP BY district_id
+                """,
+                (district_ids,)
+            )
+            for did, cnt in cur.fetchall():
+                crimes_by_district[int(did)] = cnt or 1
+        except Exception as e:
+            logger.error(f"Error counting crimes by district: {e}")
+        # формируем список в том же порядке, что rows
+        for r in rows:
+            crime_counts.append(crimes_by_district.get(int(r['districtId']), 1))
+    except Exception as e:
+        logger.error(f"patrol_calc crime count error: {e}")
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            release_db_connection(conn)
+
+    total_crimes = sum(crime_counts) or 1
+    total_patrols_available = max(1, personnel // 2)
+
+    result = []
+    for idx, r in enumerate(rows):
+        crime_ratio = crime_counts[idx] / total_crimes
+        patrols_for_row = max(1, round(total_patrols_available * crime_ratio))
+        foot = patrols_for_row // 2 + patrols_for_row % 2
+        mobile = patrols_for_row // 2
+        result.append({
+            "districtId": int(r['districtId']),
+            "districtName": r['districtName'],
+            "footPatrols": foot,
+            "mobilePatrols": mobile,
+            "area": r.get('area'),
+            "crimes": crime_counts[idx]
+        })
+    return jsonify(result)
+
 
 @app.route('/oop/export_xlsx', methods=['POST'])
 @login_required
